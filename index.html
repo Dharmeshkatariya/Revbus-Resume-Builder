@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-preset="midnight-black" data-theme-mode="dark" data-theme-font="inter" data-theme-radius="elegant" data-theme-subtle-shadows="false">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revbsus | Ultra-Premium AI Resume & CV Builder</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Lucide Vector Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="preloader-active">
+
+  <!-- Top Page Scroll Progress Indicator Line -->
+  <div class="scroll-progress-container">
+    <div id="top-loading-progress" class="scroll-progress-fill"></div>
+  </div>
+
+  <!-- Page Transition Overlay Screen -->
+  <div class="page-transition-overlay"></div>
+
+  <!-- ==========================================================================
+       1. LUXURY INTRO PRELOADER PANEL
+       ========================================================================== -->
+  <div id="preloader-master" class="preloader-container">
+    <div class="preloader-logo-wrap">
+      <div class="morphing-shape"></div>
+      <div id="loader-logo-title" class="preloader-logo">REVBSUS</div>
+    </div>
+    <div class="preloader-count-wrap">
+      <div id="loader-percent" class="preloader-percentage">0%</div>
+      <div class="preloader-bar-bg">
+        <div id="loader-fill-bar" class="preloader-bar-fill"></div>
+      </div>
+      <p style="font-size: 0.75rem; font-family: var(--font-mono); color: #71717a; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px;">Initiating Creative Node Engine</p>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       2. PREMIUM LANDING UNIVERSE PAGE
+       ========================================================================== -->
+  <div id="landing-universe-page">
+    
+    <!-- Header Navigation bar -->
+    <header class="header-nav">
+      <div class="luxury-container">
+        <div class="logo-wrap" onclick="window.location.reload();">
+          <div class="logo-icon">R</div>
+          <span class="logo-name">revbsus</span>
+          <span class="logo-version">v2.1</span>
+        </div>
+        
+        <nav class="nav-links">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#templates" class="nav-link">Templates</a>
+          <a href="#pricing" class="nav-link">Pricing</a>
+          <a href="#faq" class="nav-link">FAQ</a>
+          <a href="#blog" class="nav-link">Insights</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="theme-mode-btn" title="Toggle Light/Dark Mode"><i class="lucide-sun"></i></button>
+          <button id="trigger-login-modal" class="btn-glass" style="padding: 10px 22px; font-size: 0.88rem;">Log In</button>
+          <button id="trigger-signup-modal" class="btn-premium pulse-button" style="padding: 10px 24px; font-size: 0.88rem;">Build Resume</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Fullscreen Hero Section -->
+    <main class="landing-section hero-wrapper">
+      <canvas id="three-bg-canvas"></canvas>
+      <div class="grid-overlay-back"></div>
+      
+      <div class="luxury-container">
+        <div class="hero-grid">
+          
+          <!-- Left info texts -->
+          <div>
+            <div class="hero-pill">
+              <span class="hero-pill-badge">AI 2.0</span>
+              <span>Next-Gen Machine Parsing Algorithms Added</span>
+            </div>
+            <h1 class="hero-title shimmer-text">
+              <span>Engineered to</span>
+              <span>Get You Hired.</span>
+            </h1>
+            <p class="hero-desc">
+              Create an ultra-premium, high-impact resume on a bento-style design interface inspired by Linear and Apple. Optimize automatically for ATS parsers using live dynamic recommendations.
+            </p>
+            <div class="hero-buttons">
+              <button class="btn-premium magnetic-btn trigger-signup" style="padding: 16px 36px; font-size: 1.05rem;">
+                <span>Forge Resume Now</span> <i class="lucide-arrow-right"></i>
+              </button>
+              <a href="#features" class="btn-glass magnetic-btn" style="padding: 16px 36px; font-size: 1.05rem;">
+                <span>Explore Designs</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Floating mockups element -->
+          <div class="hero-visual-wrap card-tilt-wrap">
+            <div class="resume-mockup-stack card-tilt-element">
+              <!-- Mock 1 -->
+              <div class="mockup-item mockup-m1">
+                <div style="width: 32px; height: 32px; background: #38bdf8; border-radius: 6px; margin-bottom: 20px;"></div>
+                <div style="height: 24px; background: var(--text-main); width: 60%; border-radius: 4px; margin-bottom: 12px;"></div>
+                <div style="height: 12px; background: var(--text-muted); width: 40%; border-radius: 4px; margin-bottom: 24px;"></div>
+                <div style="height: 60px; background: var(--border-color); width: 100%; border-radius: 8px; margin-bottom: 16px;"></div>
+                <div style="height: 12px; background: var(--border-color); width: 80%; border-radius: 4px; margin-bottom: 8px;"></div>
+                <div style="height: 12px; background: var(--border-color); width: 90%; border-radius: 4px; margin-bottom: 8px;"></div>
+                <div style="height: 12px; background: var(--border-color); width: 50%; border-radius: 4px;"></div>
+              </div>
+              <!-- Mock 2 -->
+              <div class="mockup-item mockup-m2">
+                <div style="width: 32px; height: 32px; background: #8b5cf6; border-radius: 6px; margin-bottom: 20px;"></div>
+                <div style="height: 20px; background: var(--text-main); width: 70%; border-radius: 4px; margin-bottom: 30px;"></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                  <div style="height:10px; background:var(--border-color); width:45%; border-radius:4px;"></div>
+                  <div style="height:10px; background:var(--border-color); width:45%; border-radius:4px;"></div>
+                </div>
+                <div style="height: 100px; background: var(--border-color); width: 100%; border-radius: 8px;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Interactive Features list -->
+    <section id="features" class="landing-section" style="padding: 120px 0; border-top: 1px solid var(--border-color);">
+      <div class="luxury-container">
+        <div style="text-align: center; max-width: 650px; margin: 0 auto 80px;">
+          <h2 style="font-size: 3rem; font-weight: 850; margin-bottom: 16px;">Advanced Resume Blueprinting</h2>
+          <p style="color: var(--text-muted); font-size: 1.1rem;">Erase the friction of blank document alignment. Our workspace combines human-centered layouts with instant export modules.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;">
+          <!-- Card 1 -->
+          <div class="card-premium">
+            <div style="color:var(--accent); margin-bottom:20px;"><i class="lucide-sparkles" style="width:36px; height:36px;"></i></div>
+            <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:12px;">Real-Time Builder</h3>
+            <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.6;">Edit forms on the left and see template rendering update in pixel-perfect real-time on an A4 preview panel.</p>
+          </div>
+          <!-- Card 2 -->
+          <div class="card-premium">
+            <div style="color:var(--accent); margin-bottom:20px;"><i class="lucide-bar-chart" style="width:36px; height:36px;"></i></div>
+            <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:12px;">Active ATS Scoring</h3>
+            <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.6;">Our integrated parser measures your keyword optimization, formatting patterns, and details density instantly.</p>
+          </div>
+          <!-- Card 3 -->
+          <div class="card-premium">
+            <div style="color:var(--accent); margin-bottom:20px;"><i class="lucide-shield-check" style="width:36px; height:36px;"></i></div>
+            <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:12px;">Dynamic Preset Themes</h3>
+            <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.6;">Switch colors, typography fonts, border corners, and box shadows immediately using our customizable system drawer.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Scrolling track -->
+    <section class="testimonials-section" style="background: var(--bg-panel); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+      <div class="luxury-container" style="text-align: center; margin-bottom: 50px;">
+        <h2 style="font-size:2.2rem; font-weight:800; margin-bottom:12px;">Approved by Engineers Worldwide</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem;">Candidates land executive interviews at premier globally-recognized businesses.</p>
+      </div>
+
+      <div class="testimonials-track-wrap">
+        <div class="testimonials-track">
+          <!-- Card 1 -->
+          <div class="testimonial-card">
+            <p style="font-size:0.9rem; font-style:italic; line-height:1.6; color:var(--text-main);">"Revbsus completely changed how I submit CVs. The ATS checker gave me suggestions that landed me 5 interviews."</p>
+            <div class="testimonial-user">
+              <div class="user-avatar">SL</div>
+              <div>
+                <h4 style="font-size:0.85rem; font-weight:700;">Sarah Lin</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Software Architect at Vercel</p>
+              </div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="testimonial-card">
+            <p style="font-size:0.9rem; font-style:italic; line-height:1.6; color:var(--text-main);">"The modern template is absolute art. The fonts and margins are so carefully detailed. It looks highly premium."</p>
+            <div class="testimonial-user">
+              <div class="user-avatar">MD</div>
+              <div>
+                <h4 style="font-size:0.85rem; font-weight:700;">Marc Dubois</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Lead Designer at Stripe</p>
+              </div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="testimonial-card">
+            <p style="font-size:0.9rem; font-style:italic; line-height:1.6; color:var(--text-main);">"Being able to export to HTML and Simulated Word files alongside A4 PDF is a game-changer for layout consistency."</p>
+            <div class="testimonial-user">
+              <div class="user-avatar">JK</div>
+              <div>
+                <h4 style="font-size:0.85rem; font-weight:700;">James Kerr</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">VP of Engineering at Snowflake</p>
+              </div>
+            </div>
+          </div>
+          <!-- Duplicated for Infinite Scroll effect -->
+          <div class="testimonial-card">
+            <p style="font-size:0.9rem; font-style:italic; line-height:1.6; color:var(--text-main);">"Revbsus completely changed how I submit CVs. The ATS checker gave me suggestions that landed me 5 interviews."</p>
+            <div class="testimonial-user">
+              <div class="user-avatar">SL</div>
+              <div>
+                <h4 style="font-size:0.85rem; font-weight:700;">Sarah Lin</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Software Architect at Vercel</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <p style="font-size:0.9rem; font-style:italic; line-height:1.6; color:var(--text-main);">"The modern template is absolute art. The fonts and margins are so carefully detailed. It looks highly premium."</p>
+            <div class="testimonial-user">
+              <div class="user-avatar">MD</div>
+              <div>
+                <h4 style="font-size:0.85rem; font-weight:700;">Marc Dubois</h4>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Lead Designer at Stripe</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Plans Section -->
+    <section id="pricing" class="pricing-section">
+      <div class="luxury-container">
+        <div class="pricing-header">
+          <h2 class="pricing-title">Flexible Pricing Structure</h2>
+          <p style="color:var(--text-muted);">Invest in your next dynamic milestones. Transition from standard templates to highly tailored layouts immediately.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Plan 1 -->
+          <div class="pricing-card">
+            <h3 style="font-size:1.4rem; font-weight:700;">Essential</h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-top:4px;">For immediate entry portfolios</p>
+            <div class="pricing-price">$0</div>
+            <ul class="pricing-features">
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> 1 Live Active Resume Doc</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> ATS Keyword Evaluation</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Standard A4 PDF Exports</li>
+              <li style="opacity:0.4;"><i class="lucide-x" style="width:16px; color:#ef4444;"></i> Multi-Format Downloads</li>
+              <li style="opacity:0.4;"><i class="lucide-x" style="width:16px; color:#ef4444;"></i> Portfolio Page hosting</li>
+            </ul>
+            <button class="btn-glass trigger-signup" style="width:100%;">Get Started</button>
+          </div>
+
+          <!-- Plan 2 -->
+          <div class="pricing-card popular">
+            <span class="pricing-badge">BEST VALUE</span>
+            <h3 style="font-size:1.4rem; font-weight:700; color:var(--accent);">Professional</h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-top:4px;">For scaling executive candidates</p>
+            <div class="pricing-price">$12<span>/mo</span></div>
+            <ul class="pricing-features">
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Unlimited Active Documents</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> AI Resume Scoring Panel</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Master Theme Customizations</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Simulated DOCX, TXT, & HTML</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Cover Letter Creator console</li>
+            </ul>
+            <button class="btn-premium trigger-signup" style="width:100%;">Unlock Pro Features</button>
+          </div>
+
+          <!-- Plan 3 -->
+          <div class="pricing-card">
+            <h3 style="font-size:1.4rem; font-weight:700;">Enterprise</h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-top:4px;">For agencies, teams & colleges</p>
+            <div class="pricing-price">$49<span>/mo</span></div>
+            <ul class="pricing-features">
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Bulk Team Access</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> custom white-label subdomains</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Premium API interfaces</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> Dedicated account advisors</li>
+              <li><i class="lucide-check" style="width:16px; color:#10b981;"></i> SSO Authentication links</li>
+            </ul>
+            <button class="btn-glass trigger-signup" style="width:100%;">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section id="faq" class="faq-section" style="background:var(--bg-panel); border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color);">
+      <div class="luxury-container">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto 60px;">
+          <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 12px;">Frequently Asked Questions</h2>
+          <p style="color:var(--text-muted);">Quick resolutions for common billing or editing queries.</p>
+        </div>
+
+        <div class="faq-grid">
+          <!-- Item 1 -->
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Is my resume data kept private and confidential?</span>
+              <i class="lucide-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Absolutely. Your CV details, text content, and generated documents are saved securely in your browser's local sandbox storage wrapper. We never transmit structural resume values to external trackers.</p>
+            </div>
+          </div>
+          <!-- Item 2 -->
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Does this application support automated machine parsing?</span>
+              <i class="lucide-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Yes. Our ATS Classic template is designed from the ground up to follow strict machine-readable specs, rendering linear fonts and layouts that optimize beautifully for Taleo, Workday, and Lever parsers.</p>
+            </div>
+          </div>
+          <!-- Item 3 -->
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can I import an existing offline JSON configuration?</span>
+              <i class="lucide-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Sure! The export section of our dashboard workspace provides JSON downloads. You can easily back up, carry, and import your files offline between multiple computer devices instantly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="blog-section">
+      <div class="luxury-container">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto 60px;">
+          <h2 style="font-size:2.8rem; font-weight:800; margin-bottom:16px;">Insights & Strategy</h2>
+          <p style="color:var(--text-muted);">Expert guidelines on beat-parsing ratios and executive portfolio layout consistency.</p>
+        </div>
+
+        <div class="blog-grid">
+          <!-- Card 1 -->
+          <div class="blog-card card-premium" style="padding:0; overflow:hidden;">
+            <div style="background:linear-gradient(135deg, #38bdf8, #8b5cf6); height:200px; width:100%;"></div>
+            <div class="blog-body">
+              <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent); margin-bottom:8px; text-transform:uppercase;">Strategy • 5 Min Read</div>
+              <h3 style="font-size:1.15rem; margin-bottom:10px;">Mastering ATS Parsing in 2026</h3>
+              <p style="color:var(--text-muted); font-size:0.85rem; line-height:1.5;">Learn the exact action verbs and layout configurations that pass international scanner thresholds.</p>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="blog-card card-premium" style="padding:0; overflow:hidden;">
+            <div style="background:linear-gradient(135deg, #8b5cf6, #ec4899); height:200px; width:100%;"></div>
+            <div class="blog-body">
+              <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent); margin-bottom:8px; text-transform:uppercase;">Design • 4 Min Read</div>
+              <h3 style="font-size:1.15rem; margin-bottom:10px;">Typography Choices in Tech CVs</h3>
+              <p style="color:var(--text-muted); font-size:0.85rem; line-height:1.5;">Why Space Grotesk and Inter fonts convey robust design capability on initial paper-sheet reviews.</p>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="blog-card card-premium" style="padding:0; overflow:hidden;">
+            <div style="background:linear-gradient(135deg, #ec4899, #f97316); height:200px; width:100%;"></div>
+            <div class="blog-body">
+              <div style="font-size:0.75rem; font-family:var(--font-mono); color:var(--accent); margin-bottom:8px; text-transform:uppercase;">Career • 6 Min Read</div>
+              <h3 style="font-size:1.15rem; margin-bottom:10px;">The Rise of Interactive Portfolios</h3>
+              <p style="color:var(--text-muted); font-size:0.85rem; line-height:1.5;">How hosting a single-page HTML version of your experience optimizes hiring contact funnels.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Luxury Multi-Column Footer -->
+    <footer class="footer-nav">
+      <div class="luxury-container">
+        <div class="footer-grid">
+          <div>
+            <div class="logo-wrap" style="margin-bottom:20px;">
+              <div class="logo-icon">R</div>
+              <span class="logo-name">revbsus</span>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.85rem; line-height:1.6; max-width:240px; margin-bottom:20px;">
+              Crafting premium architectural resume canvases for global corporate success.
+            </p>
+            <div style="display:flex; gap:16px; color:var(--text-muted);">
+              <i class="lucide-github" style="width:18px; cursor:pointer;"></i>
+              <i class="lucide-twitter" style="width:18px; cursor:pointer;"></i>
+              <i class="lucide-linkedin" style="width:18px; cursor:pointer;"></i>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; margin-bottom:16px;">Product</h4>
+            <div style="display:get-grid; flex-direction:column; gap:12px; font-size:0.85rem; color:var(--text-muted);">
+              <div><a href="#features" class="nav-link">Builder Tool</a></div>
+              <div><a href="#templates" class="nav-link">Design Presets</a></div>
+              <div><a href="#pricing" class="nav-link">Pricing Models</a></div>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; margin-bottom:16px;">Resources</h4>
+            <div style="display:get-grid; flex-direction:column; gap:12px; font-size:0.85rem; color:var(--text-muted);">
+              <div><a href="#blog" class="nav-link">Career Blog</a></div>
+              <div><a href="#faq" class="nav-link">Help Desk</a></div>
+              <div><a href="#" class="nav-link">ATS Standards</a></div>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="font-size:0.9rem; font-weight:700; text-transform:uppercase; margin-bottom:16px;">Legal</h4>
+            <div style="display:get-grid; flex-direction:column; gap:12px; font-size:0.85rem; color:var(--text-muted);">
+              <div><a href="#" class="nav-link">Privacy Blueprints</a></div>
+              <div><a href="#" class="nav-link">Terms of Service</a></div>
+              <div><a href="#" class="nav-link">Security Policies</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center; padding-top:40px; margin-top:40px; border-top:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">
+          &copy; 2026 Revbsus Inc. All Rights Reserved. Fully persistent client sandbox.
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================================================
+       3. RESUME BUILDER DASHBOARD LAYOUT (Dashboard view - starts hidden)
+       ========================================================================== -->
+  <div id="application-dashboard-canvas" class="dashboard-layout" style="display: none;">
+    
+    <!-- Navigation Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="logo-wrap" onclick="window.location.reload();">
+        <div class="logo-icon">R</div>
+        <span class="logo-name">revbsus</span>
+      </div>
+
+      <div class="sidebar-menu">
+        <div class="sidebar-item active" data-target="workspace-builder-panel">
+          <i class="lucide-file-text"></i>
+          <span>Resume Builder</span>
+        </div>
+        <div class="sidebar-item" data-target="workspace-letter-panel">
+          <i class="lucide-mail"></i>
+          <span>Cover Letter</span>
+        </div>
+        <div class="sidebar-item" data-target="workspace-portfolio-panel">
+          <i class="lucide-globe"></i>
+          <span>Portfolio Builder</span>
+        </div>
+        <div class="sidebar-item" data-target="workspace-analytics-panel">
+          <i class="lucide-activity"></i>
+          <span>ATS Radar Score</span>
+        </div>
+        <div class="sidebar-item" data-target="workspace-templates-panel">
+          <i class="lucide-layout-template"></i>
+          <span>Theme Presets</span>
+        </div>
+        <div class="sidebar-item" data-target="workspace-export-panel">
+          <i class="lucide-download"></i>
+          <span>Export Center</span>
+        </div>
+        <div class="sidebar-item" data-target="workspace-settings-panel">
+          <i class="lucide-settings"></i>
+          <span>Settings</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-info">
+          <div class="user-avatar" style="width:36px; height:36px; font-size:0.85rem;">AS</div>
+          <div>
+            <h4 style="font-size:0.85rem; font-weight:700;">Alex Sterling</h4>
+            <p style="font-size:0.75rem; color:var(--text-muted);">alex@revbsus.io</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Workspace Dashboard Viewport panel wrapper -->
+    <div class="dashboard-content-wrap">
+      <div class="dashboard-topbar">
+        <div style="display:flex; align-items:center; gap:20px;">
+          <h3 style="font-size:1.15rem; font-weight:700;">Executive Console</h3>
+          <div id="autosave-badge" style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-muted); background:var(--bg-card); padding:3px 10px; border-radius:99px; border:1px solid var(--border-color);">● Connected</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:16px;">
+          <button class="theme-mode-btn" title="Toggle Light/Dark Mode" style="width:36px; height:36px;"><i class="lucide-sun"></i></button>
+          <button class="btn-premium" onclick="window.location.reload();" style="padding: 8px 16px; font-size: 0.8rem;"><i class="lucide-log-out"></i> Leave Workspace</button>
+        </div>
+      </div>
+
+      <div class="workspace-viewport">
+        
+        <!-- PANEL 1: MAIN BI-PANE RESUME WORKSPACE -->
+        <div id="workspace-builder-panel" class="workspace-panel active" style="padding:0; height:100%;">
+          <div class="builder-split-screen">
+            
+            <!-- Left inputs panel Form -->
+            <div class="builder-inputs-panel">
+              
+              <!-- SECTION A: PERSONAL DETAILS -->
+              <div class="builder-form-group active">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-user" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Personal Information</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                
+                <div class="builder-form-body">
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                    <div>
+                      <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Full Name</label>
+                      <input id="personal-name" type="text" class="input-premium" placeholder="e.g. Alex Sterling">
+                    </div>
+                    <div>
+                      <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Job Title</label>
+                      <input id="personal-title" type="text" class="input-premium" placeholder="e.g. Interaction Designer">
+                    </div>
+                  </div>
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                    <div>
+                      <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Email</label>
+                      <input id="personal-email" type="email" class="input-premium" placeholder="e.g. name@domain.com">
+                    </div>
+                    <div>
+                      <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Phone</label>
+                      <input id="personal-phone" type="tel" class="input-premium" placeholder="e.g. +1 (555)">
+                    </div>
+                  </div>
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div>
+                      <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Website / Portfolio</label>
+                      <input id="personal-website" type="text" class="input-premium" placeholder="e.g. www.portfolio.com">
+                    </div>
+                    <div>
+                      <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Address</label>
+                      <input id="personal-address" type="text" class="input-premium" placeholder="e.g. London, UK">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SECTION B: SUMMARY PROFILE -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-sparkles" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Executive Profile Summary</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Summary Summary</label>
+                  <textarea id="personal-profile" class="input-premium" placeholder="Summarize your biggest accomplishments in 2-3 lines..." style="min-height:100px; resize:vertical;"></textarea>
+                </div>
+              </div>
+
+              <!-- SECTION C: WORK EXPERIENCE REPEATER -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-briefcase" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Professional Experience</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <div id="experience-list-container"></div>
+                  <button class="btn-glass add-repeater-item" data-section="experience" style="width:100%; font-size:0.85rem; margin-top:12px;"><i class="lucide-plus"></i> Add Experience Position</button>
+                </div>
+              </div>
+
+              <!-- SECTION D: PROJECTS REPEATER -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-folder" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Key Technical Projects</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <div id="projects-list-container"></div>
+                  <button class="btn-glass add-repeater-item" data-section="projects" style="width:100%; font-size:0.85rem; margin-top:12px;"><i class="lucide-plus"></i> Add Representative Project</button>
+                </div>
+              </div>
+
+              <!-- SECTION E: EDUCATION -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-graduation-cap" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Education Pedigrees</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <div id="education-list-container"></div>
+                  <button class="btn-glass add-repeater-item" data-section="education" style="width:100%; font-size:0.85rem; margin-top:12px;"><i class="lucide-plus"></i> Add Academic Pedigree</button>
+                </div>
+              </div>
+
+              <!-- SECTION F: SKILLS REPEATER -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-wrench" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Competency Skill Matrix</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <div id="skills-list-container"></div>
+                  <button class="btn-glass add-repeater-item" data-section="skills" style="width:100%; font-size:0.85rem; margin-top:12px;"><i class="lucide-plus"></i> Add Skill Competency</button>
+                </div>
+              </div>
+
+              <!-- SECTION G: LANGUAGES REPEATER -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-languages" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Languages</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <div id="languages-list-container"></div>
+                  <button class="btn-glass add-repeater-item" data-section="languages" style="width:100%; font-size:0.85rem; margin-top:12px;"><i class="lucide-plus"></i> Add Language</button>
+                </div>
+              </div>
+
+              <!-- SECTION H: CERTIFICATIONS REPEATER -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-award" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Certifications & Licenses</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body">
+                  <div id="certifications-list-container"></div>
+                  <button class="btn-glass add-repeater-item" data-section="certifications" style="width:100%; font-size:0.85rem; margin-top:12px;"><i class="lucide-plus"></i> Add Certification</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Interactive Live Preview Sheet -->
+            <div class="builder-preview-panel">
+              <div class="preview-controls">
+                <div style="display:flex; gap:12px;">
+                  <button id="btn-undo-workspace" class="btn-glass" style="padding:6px 12px; font-size:0.75rem;" title="Undo"><i class="lucide-undo"></i></button>
+                  <button id="btn-redo-workspace" class="btn-glass" style="padding:6px 12px; font-size:0.75rem;" title="Redo"><i class="lucide-redo"></i></button>
+                </div>
+                
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <!-- Dynamic A4 printable Sheet indicator -->
+                  <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">A4 SHEET CANVAS</span>
+                </div>
+              </div>
+
+              <!-- Sheet Scroller Frame -->
+              <div class="preview-scroller">
+                <div id="document-paper-sheet" class="paper-sheet-wrap">
+                  <!-- Generated layouts compile cleanly here via templates module -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PANEL 2: COVER LETTER BUILDER -->
+        <div id="workspace-letter-panel" class="workspace-panel">
+          <div style="max-width:800px; margin:0 auto;">
+            <div style="margin-bottom:32px;">
+              <h2 style="font-size:2rem; font-weight:800; margin-bottom:10px;">Cover Letter Generator console</h2>
+              <p style="color:var(--text-muted);">Configure targeted job listings and draft polished letters using your prefilled resume parameters instantly.</p>
+            </div>
+
+            <div class="grid-form-pair" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+              <div>
+                <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Target Job Title</label>
+                <input id="cl-job-input" type="text" class="input-premium" value="Senior Product Designer">
+              </div>
+              <div>
+                <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Target Company Name</label>
+                <input id="cl-company-input" type="text" class="input-premium" value="Stripe">
+              </div>
+            </div>
+
+            <button id="generate-cl-btn" class="btn-premium" style="margin-bottom:30px;"><i class="lucide-sparkles"></i> Generate Custom Cover Letter</button>
+            
+            <div class="glass-panel-luxury" style="padding:24px; border-radius:12px;">
+              <textarea id="cl-output-textarea" class="input-premium" style="min-height:350px; font-family:var(--font-mono); font-size:0.9rem; line-height:1.6; resize:vertical; background:transparent; border:none;"></textarea>
+              
+              <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">
+                <button id="copy-cl-btn" class="btn-glass" style="font-size:0.85rem; padding:10px 20px;">Copy to Clipboard</button>
+                <button id="download-cl-btn" class="btn-premium" style="font-size:0.85rem; padding:10px 20px;"><i class="lucide-download"></i> Save Cover Letter</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 3: PORTFOLIO SHOWCASE -->
+        <div id="workspace-portfolio-panel" class="workspace-panel">
+          <div style="max-width:800px; margin:0 auto;">
+            <div style="margin-bottom:32px;">
+              <h2 style="font-size:2rem; font-weight:800; margin-bottom:10px;">Interactive Portfolio blueprints</h2>
+              <p style="color:var(--text-muted);">Transform your resume configurations into modular single-page layouts designed to host online instantly.</p>
+            </div>
+
+            <button id="generate-portfolio-btn" class="btn-premium" style="margin-bottom:30px;"><i class="lucide-sparkles"></i> Compile HTML Portfolio Page</button>
+
+            <div id="portfolio-output-canvas">
+              <div class="glass-panel-luxury" style="padding:60px; text-align:center; border-radius:12px;">
+                <i class="lucide-globe" style="width:48px; height:48px; color:var(--text-muted); margin-bottom:16px;"></i>
+                <p style="color:var(--text-muted); font-size:0.95rem;">Portfolio preview displays here once compiled.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 4: ATS RADAR ANALYTICS -->
+        <div id="workspace-analytics-panel" class="workspace-panel">
+          <div style="max-width:1000px; margin:0 auto;">
+            <div style="margin-bottom:40px;">
+              <h2 style="font-size:2rem; font-weight:800; margin-bottom:10px;">ATS Optimization Radar Panel</h2>
+              <p style="color:var(--text-muted);">Parser rating calculation indexes representing details density, vocabulary strength, and structure compliance.</p>
+            </div>
+
+            <div id="radar-score-svg" style="margin-bottom:40px; padding:20px 0;">
+              <!-- Dynamic gauge cards compile here instantly -->
+            </div>
+
+            <div class="builder-split-screen" style="grid-template-columns:1.2fr 0.8fr; height:auto; gap:32px; border-top:1px solid var(--border-color); padding-top:40px;">
+              <div>
+                <h3 style="font-size:1.3rem; margin-bottom:20px;">AI Optimization Recommendations</h3>
+                <ul id="ai-analysis-feedback-list" style="list-style:none; padding:0;">
+                  <!-- suggestions injected here -->
+                </ul>
+              </div>
+
+              <div>
+                <h3 style="font-size:1.3rem; margin-bottom:20px;">Discovered Keywords</h3>
+                <div id="ai-discovered-keywords" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px;">
+                  <!-- keywords display here -->
+                </div>
+
+                <div class="glass-panel-luxury" style="padding:20px; border-radius:12px;">
+                  <h4 style="font-size:0.95rem; margin-bottom:10px;">Dynamic VOCAB ENHANCER</h4>
+                  <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5; margin-bottom:15px;">Target strong action verbs. Type a summary line inside left builder inputs panel to receive vocab check insights.</p>
+                  <div id="ai-bullet-suggestions" style="font-size:0.83rem; color:var(--text-main); font-weight:500;">
+                    <!-- bullet tips -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 5: THEME PRESETS LIBRARY -->
+        <div id="workspace-templates-panel" class="workspace-panel">
+          <div style="max-width:1000px; margin:0 auto;">
+            <div style="margin-bottom:40px;">
+              <h2 style="font-size:2rem; font-weight:800; margin-bottom:10px;">Layout Architecture & Preset Themes Library</h2>
+              <p style="color:var(--text-muted);">Choose from 6 base layouts engineered for distinct industries, accompanied by real-time aesthetic presets.</p>
+            </div>
+
+            <!-- Templates card list -->
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:32px; margin-bottom:60px;">
+              <!-- MODERN card -->
+              <div class="template-card-selector card-premium active" data-template="modern" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;">
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:6px;">Modern Tech CV</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted);">High-contrast dual unequal columns styled with neat borders. Perfect for tech, developer, and startup positions.</p>
+                </div>
+                <span class="glass-pill" style="padding:4px 12px; margin-top:20px; font-size:0.75rem; text-align:center;">Selected Blueprint</span>
+              </div>
+              <!-- EXECUTIVE card -->
+              <div class="template-card-selector card-premium" data-template="executive" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;">
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:6px;">Executive Scholar</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted);">Prestigious typography and centered details, utilizing Playfair Display. Designed for VP, director, or scholar roles.</p>
+                </div>
+                <span class="glass-pill" style="padding:4px 12px; margin-top:20px; font-size:0.75rem; text-align:center;">Deploy Layout</span>
+              </div>
+              <!-- ATS card -->
+              <div class="template-card-selector card-premium" data-template="ats" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;">
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:6px;">ATS Clean Compliance</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted);">A strict, monochromatic linear layout. Guaranteed to score highly on bulk automated parsing systems.</p>
+                </div>
+                <span class="glass-pill" style="padding:4px 12px; margin-top:20px; font-size:0.75rem; text-align:center;">Deploy Layout</span>
+              </div>
+              <!-- MINIMAL card -->
+              <div class="template-card-selector card-premium" data-template="minimal" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;">
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:6px;">Minimalist Scholar</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted);">Spacious negative margins and subtle fonts. Ideal for minimalists, writers, and traditional consultancies.</p>
+                </div>
+                <span class="glass-pill" style="padding:4px 12px; margin-top:20px; font-size:0.75rem; text-align:center;">Deploy Layout</span>
+              </div>
+              <!-- CREATIVE card -->
+              <div class="template-card-selector card-premium" data-template="creative" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;">
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:6px;">Creative Cyber Grid</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted);">Bold futuristic fonts and high-contrast dark visual pane blocks. Ideal for games, marketing, or visual designers.</p>
+                </div>
+                <span class="glass-pill" style="padding:4px 12px; margin-top:20px; font-size:0.75rem; text-align:center;">Deploy Layout</span>
+              </div>
+              <!-- CORPORATE card -->
+              <div class="template-card-selector card-premium" data-template="corporate" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;">
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:6px;">Classic Corporate</h3>
+                  <p style="font-size:0.82rem; color:var(--text-muted);">Prestige layouts utilizing standard Times Roman serif styling. Highly formal, designed for legal and banking industries.</p>
+                </div>
+                <span class="glass-pill" style="padding:4px 12px; margin-top:20px; font-size:0.75rem; text-align:center;">Deploy Layout</span>
+              </div>
+            </div>
+
+            <!-- Custom Radii & Typography styles -->
+            <h3 style="font-size:1.3rem; margin-bottom:24px; border-top:1px solid var(--border-color); padding-top:40px;">Deep Customization Prefers</h3>
+            <div class="builder-split-screen" style="grid-template-columns:1fr 1fr; gap:40px; height:auto;">
+              
+              <!-- Font choices -->
+              <div>
+                <h4 style="font-size:1rem; margin-bottom:12px; color:var(--text-muted);">Typography Font Combinations</h4>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <button data-set-font="inter" class="glass-panel-luxury" style="padding:16px 20px; text-align:left; border-radius:8px; width:100%; display:flex; justify-content:between; align-items:center; cursor:pointer;">
+                    <div>
+                      <div style="font-size:0.95rem; font-weight:700;">Inter Clean Sans</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">Highly legible general purpose body text</div>
+                    </div>
+                  </button>
+                  <button data-set-font="playfair" class="glass-panel-luxury" style="padding:16px 20px; text-align:left; border-radius:8px; width:100%; display:flex; justify-content:between; align-items:center; cursor:pointer;">
+                    <div>
+                      <div style="font-size:0.95rem; font-weight:700; font-family:'Playfair Display', serif;">Playfair Display Elegant</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">Editorial serif headers paired with clean body</div>
+                    </div>
+                  </button>
+                  <button data-set-font="space-grotesk" class="glass-panel-luxury" style="padding:16px 20px; text-align:left; border-radius:8px; width:100%; display:flex; justify-content:between; align-items:center; cursor:pointer;">
+                    <div>
+                      <div style="font-size:0.95rem; font-weight:700; font-family:'Space Grotesk', sans-serif;">Space Grotesk Tech</div>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">Futuristic display headers matched with sans text</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Radii choices -->
+              <div>
+                <h4 style="font-size:1rem; margin-bottom:12px; color:var(--text-muted);">Border Corner Rounded Radius Preset</h4>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;">
+                  <button data-set-radius="sharp" class="glass-panel-luxury" style="padding:16px; border-radius:0; font-size:0.9rem; font-weight:600; cursor:pointer;">Sharp</button>
+                  <button data-set-radius="subtle" class="glass-panel-luxury" style="padding:16px; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer;">Subtle</button>
+                  <button data-set-radius="elegant" class="glass-panel-luxury" style="padding:16px; border-radius:18px; font-size:0.9rem; font-weight:600; cursor:pointer;">Elegant</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 6: REAL EXPORT ACTIONS HUB -->
+        <div id="workspace-export-panel" class="workspace-panel">
+          <div style="max-width:800px; margin:0 auto;">
+            <div style="margin-bottom:40px;">
+              <h2 style="font-size:2rem; font-weight:800; margin-bottom:10px;">Executive Document Export Center</h2>
+              <p style="color:var(--text-muted);">Download clean standard A4 documents optimized for email forwards or corporate web portals.</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:40px;">
+              <!-- PDF Card -->
+              <div class="glass-panel-luxury trigger-format-export" data-format="pdf" style="padding:32px; border-radius:12px; cursor:pointer; display:flex; gap:20px; align-items:center; transition:border 0.3s;">
+                <div style="width:48px; height:48px; border-radius:10px; background:rgba(239, 68, 68, 0.1); display:flex; align-items:center; justify-content:center; color:#ef4444;"><i class="lucide-file-text"></i></div>
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:4px;">Print-Ready A4 PDF</h3>
+                  <p style="font-size:0.8rem; color:var(--text-muted);">Saves as standardized vectors ready to print.</p>
+                </div>
+              </div>
+              <!-- DOCX Card -->
+              <div class="glass-panel-luxury trigger-format-export" data-format="docx" style="padding:32px; border-radius:12px; cursor:pointer; display:flex; gap:20px; align-items:center;">
+                <div style="width:48px; height:48px; border-radius:10px; background:rgba(37, 99, 235, 0.1); display:flex; align-items:center; justify-content:center; color:#2563eb;"><i class="lucide-file-code"></i></div>
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:4px;">MS Word (.DOCX)</h3>
+                  <p style="font-size:0.8rem; color:var(--text-muted);">Microsoft Office formatted file backup.</p>
+                </div>
+              </div>
+              <!-- HTML Card -->
+              <div class="glass-panel-luxury trigger-format-export" data-format="html" style="padding:32px; border-radius:12px; cursor:pointer; display:flex; gap:20px; align-items:center;">
+                <div style="width:48px; height:48px; border-radius:10px; background:rgba(16, 185, 129, 0.1); display:flex; align-items:center; justify-content:center; color:#10b981;"><i class="lucide-globe"></i></div>
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:4px;">Standalone HTML Page</h3>
+                  <p style="font-size:0.8rem; color:var(--text-muted);">Host your CV on any server sandbox instantly.</p>
+                </div>
+              </div>
+              <!-- plaintext Card -->
+              <div class="glass-panel-luxury trigger-format-export" data-format="txt" style="padding:32px; border-radius:12px; cursor:pointer; display:flex; gap:20px; align-items:center;">
+                <div style="width:48px; height:48px; border-radius:10px; background:rgba(245, 158, 11, 0.1); display:flex; align-items:center; justify-content:center; color:#f59e0b;"><i class="lucide-book-open"></i></div>
+                <div>
+                  <h3 style="font-size:1.15rem; margin-bottom:4px;">Plaintext Document</h3>
+                  <p style="font-size:0.8rem; color:var(--text-muted);">Saves as an aligned clean text (.txt) outline.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Offline backup card -->
+            <div class="glass-panel-luxury" style="padding:32px; border-radius:12px; display:flex; justify-content:between; align-items:center;">
+              <div>
+                <h3 style="font-size:1.1rem; margin-bottom:6px;">Need to back up offline?</h3>
+                <p style="color:var(--text-muted); font-size:0.82rem;">Download your comprehensive configurations as raw JSON data. Keep CV logs safe and upload back at any time.</p>
+              </div>
+              <button class="btn-premium trigger-format-export" data-format="json" style="font-size:0.85rem; padding:10px 20px;"><i class="lucide-save"></i> Download JSON Backup</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 7: SETTINGS -->
+        <div id="workspace-settings-panel" class="workspace-panel">
+          <div style="max-width:800px; margin:0 auto;">
+            <div style="margin-bottom:32px;">
+              <h2 style="font-size:2rem; font-weight:800; margin-bottom:10px;">User Settings Console</h2>
+              <p style="color:var(--text-muted);">Manage your local sandbox configs, credential defaults, and persistent cache.</p>
+            </div>
+
+            <div class="glass-panel-luxury" style="padding:24px; border-radius:12px; margin-bottom:24px;">
+              <h3 style="font-size:1.1rem; margin-bottom:12px;">Active Account Profiles</h3>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Registered Name</label>
+                  <input type="text" class="input-premium" value="Alex Sterling" disabled>
+                </div>
+                <div>
+                  <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Secure Email</label>
+                  <input type="email" class="input-premium" value="alex@revbsus.io" disabled>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-panel-luxury" style="padding:24px; border-radius:12px; display:flex; justify-content:between; align-items:center; border-color:#ef444455;">
+              <div>
+                <h3 style="font-size:1.1rem; margin-bottom:6px; color:#ef4444;">Erase Browser Local Cache?</h3>
+                <p style="color:var(--text-muted); font-size:0.82rem;">This clears all offline active resumes, themes, custom styles, and reverts configs to original starter blueprints.</p>
+              </div>
+              <button class="btn-glass" onclick="localStorage.clear();window.location.reload();" style="border-color:#ef4444; color:#ef4444;"><i class="lucide-zap"></i> Wipe Cache</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+       4. AUTHENTICATION PAGES / COLLAPSED MODALS
+       ========================================================================== -->
+  <!-- MODAL A: LOG IN -->
+  <div id="auth-login-modal" class="auth-modal">
+    <div class="auth-overlay"></div>
+    <div class="auth-container">
+      <div class="auth-close"><i class="lucide-x"></i></div>
+      <div style="text-align:center; margin-bottom:30px;">
+        <div class="logo-icon" style="margin:0 auto 12px; width:44px; height:44px; font-size:1.4rem;">R</div>
+        <h2 style="font-size:1.6rem; font-weight:800;">Log back into Revbsus</h2>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Enter credentials to open your secure active layouts</p>
+      </div>
+
+      <form id="auth-login-form">
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Registered Email</label>
+          <input type="email" class="input-premium" value="alex@revbsus.io" placeholder="name@domain.com" required style="width:100%;">
+        </div>
+        <div style="margin-bottom:24px;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Secure Password</label>
+          <input type="password" class="input-premium" value="password" placeholder="••••••••" required style="width:100%;">
+        </div>
+        <button type="submit" class="btn-premium pulse-button" style="width:100%; padding:14px; font-size:0.95rem;">Enter Workspace</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL B: SIGN UP -->
+  <div id="auth-signup-modal" class="auth-modal">
+    <div class="auth-overlay"></div>
+    <div class="auth-container">
+      <div class="auth-close"><i class="lucide-x"></i></div>
+      <div style="text-align:center; margin-bottom:30px;">
+        <div class="logo-icon" style="margin:0 auto 12px; width:44px; height:44px; font-size:1.4rem;">R</div>
+        <h2 style="font-size:1.6rem; font-weight:800;">Design Your Next CV</h2>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Register a local sandbox profile to initialize builder templates</p>
+      </div>
+
+      <form id="auth-signup-form">
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Full Professional Name</label>
+          <input type="text" class="input-premium" value="Alex Sterling" required style="width:100%;">
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Your Primary Email Address</label>
+          <input type="email" class="input-premium" value="alex@revbsus.io" required style="width:100%;">
+        </div>
+        <div style="margin-bottom:24px;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Choose Password</label>
+          <input type="password" class="input-premium" value="password" required style="width:100%;">
+        </div>
+        <button type="submit" class="btn-premium" style="width:100%; padding:14px; font-size:0.95rem;">Forge Portfolio Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLOATING WORKSPACE ACCENTS PANEL -->
+  <button class="floating-customizer-btn" title="Open Customizer Settings Control"><i class="lucide-pipette"></i></button>
+
+  <div id="theme-customizer-backdrop" class="customizer-backdrop"></div>
+  <div id="theme-settings-panel" class="customizer-drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3 style="font-size:1.2rem; font-weight:800;">Aesthetic customization Drawer</h3>
+      <button id="close-customizer-btn" style="cursor:pointer; color:var(--text-muted);"><i class="lucide-x" style="width:20px;"></i></button>
+    </div>
+    <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:14px;">Tweak colors, styling borders, and shapes dynamically in physical sheet renders.</p>
+
+    <!-- Theme Preset dots customizer -->
+    <div>
+      <h4 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Accent Preset Colors</h4>
+      <div class="preset-grid">
+        <!-- 1. midnight-black -->
+        <button class="preset-dot active" data-preset="midnight-black" title="Midnight Black">
+          <div class="preset-dot-color" style="background:#ffffff; border:1px solid #555;"></div>
+        </button>
+        <!-- 2. ocean-blue -->
+        <button class="preset-dot" data-preset="ocean-blue" title="Ocean Blue">
+          <div class="preset-dot-color" style="background:#2563eb;"></div>
+        </button>
+        <!-- 3. purple-galaxy -->
+        <button class="preset-dot" data-preset="purple-galaxy" title="Purple Galaxy">
+          <div class="preset-dot-color" style="background:#8b5cf6;"></div>
+        </button>
+        <!-- 4. emerald-green -->
+        <button class="preset-dot" data-preset="emerald-green" title="Emerald Green">
+          <div class="preset-dot-color" style="background:#10b981;"></div>
+        </button>
+        <!-- 5. sunset-orange -->
+        <button class="preset-dot" data-preset="sunset-orange" title="Sunset Orange">
+          <div class="preset-dot-color" style="background:#f97316;"></div>
+        </button>
+        <!-- 6. rose-pink -->
+        <button class="preset-dot" data-preset="rose-pink" title="Rose Pink">
+          <div class="preset-dot-color" style="background:#ec4899;"></div>
+        </button>
+        <!-- 7. cyber-neon -->
+        <button class="preset-dot" data-preset="cyber-neon" title="Cyber Neon">
+          <div class="preset-dot-color" style="background:#39ff14;"></div>
+        </button>
+        <!-- 8. arctic-white -->
+        <button class="preset-dot" data-preset="arctic-white" title="Arctic White">
+          <div class="preset-dot-color" style="background:#38bdf8;"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Layout Adjustments -->
+    <div style="margin-top:24px; border-top:1px solid var(--border-color); padding-top:20px;">
+      <h4 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px;">Document Geometry Sliders</h4>
+      
+      <!-- Font Size Slider -->
+      <div style="margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="slider-font-size" style="font-size:0.85rem; font-weight:500;">Document Font Size</label>
+          <span id="label-font-size" style="font-size:0.8rem; font-family:var(--font-mono); color:var(--accent);">14px</span>
+        </div>
+        <input type="range" id="slider-font-size" min="10" max="22" value="14" style="width:100%; height:6px; cursor:ew-resize; accent-color:var(--accent); background:rgba(255,255,255,0.1); border-radius:3px;">
+      </div>
+
+      <!-- Line Spacing Slider -->
+      <div style="margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="slider-line-spacing" style="font-size:0.85rem; font-weight:500;">Line Spacing</label>
+          <span id="label-line-spacing" style="font-size:0.8rem; font-family:var(--font-mono); color:var(--accent);">1.50</span>
+        </div>
+        <input type="range" id="slider-line-spacing" min="1" max="2.2" step="0.05" value="1.50" style="width:100%; height:6px; cursor:ew-resize; accent-color:var(--accent); background:rgba(255,255,255,0.1); border-radius:3px;">
+      </div>
+
+      <!-- Page Margins Slider -->
+      <div style="margin-bottom:18px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="slider-margins" style="font-size:0.85rem; font-weight:500;">Page Margins (Padding)</label>
+          <span id="label-margins" style="font-size:0.8rem; font-family:var(--font-mono); color:var(--accent);">40px</span>
+        </div>
+        <input type="range" id="slider-margins" min="15" max="60" value="40" style="width:100%; height:6px; cursor:ew-resize; accent-color:var(--accent); background:rgba(255,255,255,0.1); border-radius:3px;">
+      </div>
+    </div>
+
+    <!-- Paper Shade Settings -->
+    <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:20px; margin-bottom: 20px;">
+      <h4 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Premium Paper Shades</h4>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+        <button class="paper-shade-btn active" data-shade="pure-white" data-code="#ffffff" style="background:#ffffff; color:#000; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer;" title="Pure Bleached A4 Stock">Pure White</button>
+        <button class="paper-shade-btn" data-shade="warm-ivory" data-code="#fdfbf7" style="background:#fdfbf7; color:#1c1917; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer;" title="Premium Warm Textured Ivory">Warm Ivory</button>
+        <button class="paper-shade-btn" data-shade="cool-gray" data-code="#f3f4f6" style="background:#f3f4f6; color:#111827; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer;" title="Recycled Post-Consumer Cool Gray">Cool Gray</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direct ESM script initialization imports -->
+  <script type="module" src="/js/main.js"></script>
+  <script type="module">
+    // Bind Lucide vector icons on initial screen load
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

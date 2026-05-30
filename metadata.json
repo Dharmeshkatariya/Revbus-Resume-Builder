@@ -1,0 +1,6 @@
+{
+  "name": "Revbsus Resume Builder",
+  "description": "An ultra-premium, AI-powered futuristic resume and CV builder with dynamic templates, ATS optimization, and visual design themes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
