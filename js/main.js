@@ -4,6 +4,7 @@
    ========================================================================= */
 
 import { themeController } from "./theme.js";
+import "./dashboard.js";
 
 class RevbsusMasterApp {
   constructor() {

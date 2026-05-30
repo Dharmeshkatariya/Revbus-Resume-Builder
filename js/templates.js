@@ -3,6 +3,8 @@
    Renders user resume parameters into precise, elegant document bodies.
    ========================================================================= */
 
+import { themeController } from "./theme.js";
+
 export const resumeTemplates = {
   // 1. MODERN TEMPLATE (High-Contrast Tech/SaaS layout)
   modern: (data, theme) => {

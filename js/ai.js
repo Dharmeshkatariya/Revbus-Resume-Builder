@@ -3,6 +3,8 @@
    Calculates live reactiveness of resumes, score indexes, and bullet suggestions.
    ========================================================================= */
 
+import { themeController } from "./theme.js";
+
 export class AIAssistant {
   // Evaluates resume details and returns dynamic metrics and custom optimization proposals
   static analyzeResume(data) {

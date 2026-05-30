@@ -6,6 +6,7 @@
 import { workspaceBuilder } from "./builder.js";
 import { exporter } from "./export.js";
 import { AIAssistant } from "./ai.js";
+import { themeController } from "./theme.js";
 
 class DashboardPanelManager {
   constructor() {

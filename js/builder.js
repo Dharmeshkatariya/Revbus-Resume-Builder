@@ -101,8 +101,20 @@ class ResumeBuilder {
       this.activeTemplate = savedTemplate;
     }
 
+    // Load Version History Snapshots
+    this.snapshots = [];
+    const savedSnapshots = localStorage.getItem("revbsus_resume_snapshots");
+    if (savedSnapshots) {
+      try {
+        this.snapshots = JSON.parse(savedSnapshots);
+      } catch (e) {
+        console.error("Failed to parse saved resume snapshots", e);
+      }
+    }
+
     this.renderFormFields();
     this.updatePreview();
+    this.renderSnapshotsList();
     this.setupListeners();
   }
 
@@ -227,6 +239,80 @@ class ResumeBuilder {
         `).join(' ');
       }
     }
+  }
+
+  renderSnapshotsList() {
+    const listWrapper = document.getElementById("snapshots-list-wrapper");
+    if (!listWrapper) return;
+
+    if (!this.snapshots || this.snapshots.length === 0) {
+      listWrapper.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:12px;">No saved snapshots yet.</p>`;
+      return;
+    }
+
+    listWrapper.innerHTML = this.snapshots.map((snap, index) => {
+      const dateStr = new Date(snap.timestamp).toLocaleString();
+      return `
+        <div class="glass-panel-luxury" style="padding:10px 12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-color); background:rgba(255,255,255,0.01); margin-bottom:8px;">
+          <div style="flex:1; min-width:0; padding-right:8px; text-align:left;">
+            <div style="font-size:0.82rem; font-weight:600; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${snap.title}">${snap.title}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono); margin-top:2px;">${dateStr}</div>
+          </div>
+          <div style="display:flex; gap:6px; flex-shrink:0;">
+            <button class="btn-glass revert-snapshot-btn" data-id="${snap.id}" style="padding:4px 8px; font-size:0.75rem; color:var(--accent); border-color:var(--accent); cursor:pointer;" title="Revert to this snapshot">Revert</button>
+            <button class="btn-glass delete-snapshot-btn" data-id="${snap.id}" style="padding:4px 8px; font-size:0.75rem; color:#ef4444; border-color:rgba(239,68,68,0.2); cursor:pointer;" title="Delete snapshot"><i class="lucide-trash" style="width:12px; height:12px;"></i></button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  saveSnapshot(title) {
+    const defaultTitle = `Snapshot #${this.snapshots.length + 1}`;
+    const name = title.trim() || defaultTitle;
+    const newSnapshot = {
+      id: "snap_" + Date.now(),
+      title: name,
+      timestamp: Date.now(),
+      data: JSON.stringify(this.data)
+    };
+
+    if (!this.snapshots) this.snapshots = [];
+    this.snapshots.unshift(newSnapshot);
+    localStorage.setItem("revbsus_resume_snapshots", JSON.stringify(this.snapshots));
+    this.renderSnapshotsList();
+  }
+
+  revertToSnapshot(snapshotId) {
+    const snapshot = this.snapshots.find(s => s.id === snapshotId);
+    if (!snapshot) return;
+
+    this.pushHistory();
+
+    try {
+      this.data = JSON.parse(snapshot.data);
+      this.renderFormFields();
+      this.updatePreview();
+      this.saveToStorage();
+      
+      const badge = document.getElementById("autosave-badge");
+      if (badge) {
+        badge.innerHTML = `<span style="color:var(--accent);">●</span> Reverted to "${snapshot.title}"`;
+        setTimeout(() => {
+          badge.innerHTML = `● Connected`;
+        }, 2500);
+      }
+    } catch (e) {
+      console.error("Revert snapshot logic error", e);
+    }
+  }
+
+  deleteSnapshot(snapshotId) {
+    this.snapshots = this.snapshots.filter(s => s.id !== snapshotId);
+    localStorage.setItem("revbsus_resume_snapshots", JSON.stringify(this.snapshots));
+    this.renderSnapshotsList();
   }
 
   renderFormFields() {
@@ -562,10 +648,45 @@ class ResumeBuilder {
 
       const redoBtn = e.target.closest("#btn-redo-workspace");
       if (redoBtn) this.redo();
+
+      // Save Snapshot Click
+      const saveSnapBtn = e.target.closest("#btn-save-snapshot");
+      if (saveSnapBtn) {
+        const inputField = document.getElementById("snapshot-title-input");
+        if (inputField) {
+          const val = inputField.value;
+          this.saveSnapshot(val);
+          inputField.value = "";
+        }
+      }
+
+      // Revert Snapshot Click
+      const revertBtn = e.target.closest(".revert-snapshot-btn");
+      if (revertBtn) {
+        const snapId = revertBtn.getAttribute("data-id");
+        this.revertToSnapshot(snapId);
+      }
+
+      // Delete Snapshot Click
+      const delSnapBtn = e.target.closest(".delete-snapshot-btn");
+      if (delSnapBtn) {
+        const snapId = delSnapBtn.getAttribute("data-id");
+        this.deleteSnapshot(snapId);
+      }
+    });
+
+    // Enter Support inside snapshot title input
+    document.addEventListener("keydown", (e) => {
+      if (e.target.id === "snapshot-title-input" && e.key === "Enter") {
+        e.preventDefault();
+        const saveBtn = document.getElementById("btn-save-snapshot");
+        if (saveBtn) saveBtn.click();
+      }
     });
   }
 }
 
 export const workspaceBuilder = new ResumeBuilder();
+window.workspaceBuilder = workspaceBuilder;
 // Initialize after modules settle
 workspaceBuilder.init();

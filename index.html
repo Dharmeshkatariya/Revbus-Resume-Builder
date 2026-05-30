@@ -651,6 +651,33 @@
                 </div>
               </div>
 
+              <!-- SECTION I: VERSION SNAPSHOTS -->
+              <div class="builder-form-group">
+                <div class="builder-form-group-head">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="lucide-history" style="color:var(--accent); width:18px;"></i>
+                    <h4 style="font-size:1rem; font-weight:700;">Version History (Snapshots)</h4>
+                  </div>
+                  <i class="lucide-chevron-down header-chevron" style="transition:transform 0.2s;"></i>
+                </div>
+                <div class="builder-form-body" style="padding-bottom:16px;">
+                  <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
+                    Keep persistent local recovery points of your active resume content. You can name, review, and roll back to any snapshot instantly without internet dependencies.
+                  </p>
+                  
+                  <div style="display:flex; gap:8px; margin-bottom:14px;">
+                    <input id="snapshot-title-input" type="text" class="input-premium" placeholder="e.g. Added Stripe role" style="font-size:0.85rem; flex:1; height:40px; margin-bottom:0;">
+                    <button id="btn-save-snapshot" class="btn-premium" style="font-size:0.82rem; padding:0 16px; height:40px; flex-shrink:0; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                      <i class="lucide-camera" style="width:14px; height:14px;"></i> Save Snapshot
+                    </button>
+                  </div>
+
+                  <div id="snapshots-list-wrapper" style="display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto; padding-right:2px;">
+                    <!-- Snapshots render container -->
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             <!-- Right Interactive Live Preview Sheet -->
