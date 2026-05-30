@@ -224,6 +224,138 @@ export function getTemplatePreset(key) {
       base.sectionHeaders.borderStyle = "solid-bottom";
       base.sectionHeaders.color = "#7c3aed";
       break;
+
+    case "luxury-black":
+      base.layout = "executive";
+      base.typography.fontFamily = "Playfair Display";
+      base.colors.primary = "#d4af37"; // Gold accent!
+      base.colors.accent = "#d4af37";
+      base.colors.secondary = "#a3a3a3";
+      base.colors.text = "#e5e5e5";
+      base.colors.background = "#111111"; // Luxury Black canvas!
+      base.headerStyle.fontFamily = "Playfair Display";
+      base.headerStyle.colorName = "#d4af37";
+      base.headerStyle.colorTitle = "#ffffff";
+      base.headerStyle.alignment = "center";
+      base.headerStyle.borderStyle = "double-bottom";
+      base.headerStyle.borderColor = "#d4af37";
+      base.sectionHeaders.borderStyle = "double-bottom";
+      base.sectionHeaders.color = "#d4af37";
+      base.sectionHeaders.alignment = "center";
+      break;
+      
+    case "software-eng":
+      base.layout = "single-column";
+      base.typography.fontFamily = "JetBrains Mono";
+      base.colors.primary = "#0d9488"; // Teal
+      base.colors.accent = "#14b8a6";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "JetBrains Mono";
+      base.headerStyle.colorName = "#1d1d1f";
+      base.headerStyle.colorTitle = "#0d9488";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#0d9488";
+      break;
+
+    case "academic-res":
+      base.layout = "single-column";
+      base.typography.fontFamily = "Lora";
+      base.colors.primary = "#44403c"; // Deep warm grey
+      base.colors.accent = "#78716c";
+      base.colors.secondary = "#57534e";
+      base.headerStyle.fontFamily = "Playfair Display";
+      base.headerStyle.alignment = "center";
+      base.headerStyle.colorName = "#44403c";
+      base.headerStyle.borderStyle = "solid-bottom";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#44403c";
+      break;
+
+    case "sales-exec":
+      base.layout = "right-sidebar";
+      base.typography.fontFamily = "Montserrat";
+      base.colors.primary = "#dc2626"; // Crimson red
+      base.colors.accent = "#ef4444";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "Montserrat";
+      base.headerStyle.colorName = "#dc2626";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#dc2626";
+      break;
+
+    case "hr-talent":
+      base.layout = "left-sidebar";
+      base.typography.fontFamily = "Poppins";
+      base.colors.primary = "#e11d48"; // Rose pink
+      base.colors.accent = "#fb7185";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "Poppins";
+      base.headerStyle.colorName = "#e11d48";
+      base.sectionHeaders.borderStyle = "bullet";
+      base.sectionHeaders.color = "#e11d48";
+      break;
+
+    case "consultant":
+      base.layout = "two-column";
+      base.typography.fontFamily = "Inter";
+      base.colors.primary = "#0f172a"; // Slate/navy
+      base.colors.accent = "#334155";
+      base.colors.secondary = "#475569";
+      base.headerStyle.fontFamily = "Inter";
+      base.headerStyle.colorName = "#0f172a";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#0f172a";
+      break;
+
+    case "data-scientist":
+      base.layout = "left-sidebar";
+      base.typography.fontFamily = "JetBrains Mono";
+      base.colors.primary = "#16a34a"; // Green tech
+      base.colors.accent = "#22c55e";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "JetBrains Mono";
+      base.headerStyle.colorName = "#111827";
+      base.sectionHeaders.borderStyle = "bullet";
+      base.sectionHeaders.color = "#16a34a";
+      break;
+
+    case "med-health":
+      base.layout = "single-column";
+      base.typography.fontFamily = "Roboto";
+      base.colors.primary = "#0891b2"; // Medical teal-cyan
+      base.colors.accent = "#06b6d4";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "Roboto";
+      base.headerStyle.colorName = "#0891b2";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#0891b2";
+      break;
+
+    case "startup-modern":
+      base.layout = "two-column";
+      base.typography.fontFamily = "DM Sans";
+      base.colors.primary = "#7c3aed"; // Startup violet
+      base.colors.accent = "#8b5cf6";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "DM Sans";
+      base.headerStyle.colorName = "#1c1917";
+      base.headerStyle.colorTitle = "#7c3aed";
+      base.sectionHeaders.borderStyle = "bullet";
+      base.sectionHeaders.color = "#7c3aed";
+      break;
+
+    case "finance-pro":
+      base.layout = "single-column";
+      base.typography.fontFamily = "Lora";
+      base.colors.primary = "#14532d"; // Warm hunter green
+      base.colors.accent = "#166534";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "Lora";
+      base.headerStyle.colorName = "#14532d";
+      base.headerStyle.alignment = "left";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#14532d";
+      break;
   }
 
   return base;
@@ -403,6 +535,80 @@ function renderSection(key, data, style, config) {
         </div>
       </div>
     `).join('');
+  } else {
+    // Falls back to Custom section or Custom Block rendering
+    const items = data[key];
+    const bType = style.blockType || "general";
+
+    if (items && Array.isArray(items) && items.length > 0) {
+      if (bType === "timeline") {
+        contentHtml = items.map(t => `
+          <div style="border-left: 2px solid ${config.colors?.accent || '#8b5cf6'}; padding-left: 14px; margin-bottom: 14px; position: relative;">
+            <div style="position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: ${config.colors?.accent || '#8b5cf6'};"></div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span style="font-size: 0.9rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${t.title || ""}</span>
+              <span style="font-size: 0.78rem; font-weight: 600; color: ${config.colors?.accent || '#8b5cf6'};">${t.date || ""}</span>
+            </div>
+            ${t.subtitle ? `<div style="font-size: 0.8rem; color: ${config.colors?.secondary || '#4b5563'}; font-weight: 500; margin: 2px 0;">${t.subtitle}</div>` : ""}
+            ${t.description ? `<p style="font-size: 0.82rem; color: ${config.colors?.text || '#4b5563'}; margin-top: 4px;">${t.description}</p>` : ""}
+          </div>
+        `).join('');
+      } else if (bType === "skill-meter" || bType === "rating") {
+        contentHtml = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            ${items.map(s => {
+              const level = parseInt(s.level) || 4;
+              const dots = Array.from({ length: 5 }, (_, i) => `
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 3px; background: ${i < level ? (config.colors?.accent || '#8b5cf6') : '#e5e7eb'};"></span>
+              `).join('');
+              return `
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(0,0,0,0.05); padding-bottom: 6px;">
+                  <span style="font-size: 0.82rem; font-weight: 600; color: ${config.colors?.text || '#1f2937'};">${s.name || s.title || ""}</span>
+                  <div style="display: flex;">${dots}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else if (bType === "statistics") {
+        contentHtml = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin: 8px 0;">
+            ${items.map(st => `
+              <div style="background: rgba(${hexToRgb(config.colors?.accent || '#8b5cf6')}, 0.04); border-left: 3.5px solid ${config.colors?.accent || '#8b5cf6'}; padding: 10px 14px; border-radius: 4px; text-align: center;">
+                <div style="font-size: 1.6rem; font-weight: 800; color: ${config.colors?.primary || '#111827'}; line-height: 1.1;">${st.title || ""}</div>
+                <div style="font-size: 0.75rem; color: ${config.colors?.secondary || '#6b7280'}; font-weight: 500; margin-top: 4px; text-transform: uppercase;">${st.subtitle || ""}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (bType === "social") {
+        contentHtml = `
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px;">
+            ${items.map(soc => `
+              <a href="https://${soc.url || '#'}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.06); border-radius: 4px; text-decoration: none; font-size: 0.8rem; color: ${config.colors?.primary || '#111827'}; font-weight: 600;">
+                <strong style="color: ${config.colors?.accent || '#8b5cf6'};">${soc.platform || "Link"}</strong>: <span>${soc.username || ""}</span>
+              </a>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        // Fallback for custom card or achievement or custom array items
+        contentHtml = items.map(itm => `
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <h4 style="font-size: 0.90rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${itm.title || ""}</h4>
+              ${itm.date ? `<span style="font-size: 0.78rem; font-weight: 600; color: ${config.colors?.accent || '#8b5cf6'};">${itm.date}</span>` : ""}
+            </div>
+            ${itm.subtitle || itm.organization ? `<div style="font-size: 0.8rem; color: ${config.colors?.secondary || '#6b7280'}; font-weight: 500; margin: 1px 0;">${itm.subtitle || itm.organization || ""}</div>` : ""}
+            ${itm.description ? `<p style="font-size: 0.82rem; color: ${config.colors?.text || '#4b5563'}; margin-top: 3px; line-height: 1.4;">${itm.description}</p>` : ""}
+          </div>
+        `).join('');
+      }
+    } else if (typeof items === "string") {
+      contentHtml = `<p style="${textStyle}">${items}</p>`;
+    } else {
+      return "";
+    }
   }
 
   return `
@@ -495,6 +701,29 @@ export function renderDynamicResume(data, config) {
         ${isLeft ? `<div>${sidebarHtml}</div><div>${mainHtml}</div>` : `<div>${mainHtml}</div><div>${sidebarHtml}</div>`}
       </div>
     `;
+  } else if (layout === "three-column") {
+    let leftHtml = "";
+    let centerHtml = "";
+    let rightHtml = "";
+
+    sOrder.forEach(key => {
+      if (!activeSections[key]) return;
+      if (key === "profile" || key === "skills" || key === "languages") {
+        leftHtml += `<div style="margin-bottom: 20px;">${activeSections[key]}</div>`;
+      } else if (key === "experience") {
+        centerHtml += `<div style="margin-bottom: 20px;">${activeSections[key]}</div>`;
+      } else {
+        rightHtml += `<div style="margin-bottom: 20px;">${activeSections[key]}</div>`;
+      }
+    });
+
+    bodyHtml = `
+      <div style="display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 16px;">
+        <div style="border-right: 1.5px solid rgba(0,0,0,0.06); padding-right:12px;">${leftHtml}</div>
+        <div>${centerHtml}</div>
+        <div style="border-left: 1.5px solid rgba(0,0,0,0.06); padding-left:12px;">${rightHtml}</div>
+      </div>
+    `;
   } else if (layout === "grid-layout") {
     const profileHtml = activeSections["profile"] ? `<div style="margin-bottom: 24px;">${activeSections["profile"]}</div>` : "";
     let leftCol = "";
@@ -548,6 +777,16 @@ export const resumeTemplates = {
   "marketing-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("marketing-resume")),
   "student-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("student-resume")),
   "freelancer-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("freelancer-resume")),
+  "luxury-black": (data, theme) => renderDynamicResume(data, getTemplatePreset("luxury-black")),
+  "software-eng": (data, theme) => renderDynamicResume(data, getTemplatePreset("software-eng")),
+  "academic-res": (data, theme) => renderDynamicResume(data, getTemplatePreset("academic-res")),
+  "sales-exec": (data, theme) => renderDynamicResume(data, getTemplatePreset("sales-exec")),
+  "hr-talent": (data, theme) => renderDynamicResume(data, getTemplatePreset("hr-talent")),
+  "consultant": (data, theme) => renderDynamicResume(data, getTemplatePreset("consultant")),
+  "data-scientist": (data, theme) => renderDynamicResume(data, getTemplatePreset("data-scientist")),
+  "med-health": (data, theme) => renderDynamicResume(data, getTemplatePreset("med-health")),
+  "startup-modern": (data, theme) => renderDynamicResume(data, getTemplatePreset("startup-modern")),
+  "finance-pro": (data, theme) => renderDynamicResume(data, getTemplatePreset("finance-pro")),
 
   // Aliases for retro-compatibility
   "modern": (data, theme) => renderDynamicResume(data, getTemplatePreset("modern-minimal")),

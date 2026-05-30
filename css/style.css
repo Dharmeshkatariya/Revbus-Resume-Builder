@@ -1282,3 +1282,169 @@ button, input, select, textarea {
   background: rgba(255,255,255,0.05);
 }
 
+/* ==========================================================================
+   NEW PROFESSIONAL GRID & SPLIT VIEW SYSTEM
+   ========================================================================== */
+
+.application-dashboard-canvas {
+  display: grid;
+  grid-template-columns: 55% 6px 45%; 
+  height: calc(100vh - 70px);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--bg-app);
+}
+
+/* Left components input standard layout override */
+.builder-inputs-panel {
+  overflow-y: auto;
+  padding: 24px 24px 60px;
+  border-right: 1px solid var(--border-color);
+}
+
+/* Resizable Divider handles and feedback drag state */
+.resizable-divider {
+  width: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  cursor: col-resize;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+  z-index: 100;
+  user-select: none;
+}
+.resizable-divider:hover, .resizable-divider.dragging {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+.resizable-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 24px;
+  background: var(--text-muted);
+  border-radius: 1px;
+}
+
+/* RIGHT PANEL: PREVIEW CANVAS SHEET container */
+.builder-preview-panel {
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* PROPERTIES PANEL SIDEBAR STYLINGS */
+.builder-properties-panel {
+  background-color: var(--bg-panel);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px 20px 48px;
+  height: 100%;
+  z-index: 10;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+}
+
+/* COLLAPSED / ACTION ACTIVE STATES FOR MODES */
+.application-dashboard-canvas.view-editor-only {
+  grid-template-columns: 100% 0px 0px !important;
+}
+.application-dashboard-canvas.view-editor-only .builder-preview-panel,
+.application-dashboard-canvas.view-editor-only .resizable-divider,
+.application-dashboard-canvas.view-editor-only .builder-properties-panel {
+  display: none !important;
+}
+
+.application-dashboard-canvas.view-preview-only {
+  grid-template-columns: 0px 0px 100% !important;
+}
+.application-dashboard-canvas.view-preview-only .builder-inputs-panel,
+.application-dashboard-canvas.view-preview-only .resizable-divider,
+.application-dashboard-canvas.view-preview-only .builder-properties-panel {
+  display: none !important;
+}
+
+.application-dashboard-canvas.view-fullscreen-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5000;
+  grid-template-columns: 0px 0px 100% !important;
+}
+.application-dashboard-canvas.view-fullscreen-mode .builder-inputs-panel,
+.application-dashboard-canvas.view-fullscreen-mode .resizable-divider,
+.application-dashboard-canvas.view-fullscreen-mode .builder-properties-panel {
+  display: none !important;
+}
+
+/* Two sheet rendering layout for dual screen */
+.application-dashboard-canvas.view-dual .preview-scroller {
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+}
+
+/* Sidebar toggling triggers inside CSS variables grid layout */
+.properties-sidebar-closed #builder-properties-sidebar {
+  display: none !important;
+}
+
+.sidebar-collapse-toggle {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.sidebar-collapse-toggle:hover {
+  background: var(--bg-card);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Zoom support classes inside the PDF mockup frame */
+.zoom-fit-width .paper-sheet-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+.zoom-fit-height .paper-sheet-wrap {
+  height: calc(100vh - 160px) !important;
+  min-height: auto !important;
+  width: auto !important;
+  aspect-ratio: 1 / 1.414 ;
+}
+.zoom-full-page .paper-sheet-wrap {
+  width: 794px !important;
+  min-height: 1123px !important;
+}
+
+/* Preset & block building list badge */
+.active-instance-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #fff;
+}
+

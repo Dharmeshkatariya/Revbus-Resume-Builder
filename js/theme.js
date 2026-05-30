@@ -180,5 +180,6 @@ class ThemeEngine {
 }
 
 export const themeController = new ThemeEngine();
+window.themeController = themeController;
 // Fire dynamic initialization as module loads
 themeController.init();

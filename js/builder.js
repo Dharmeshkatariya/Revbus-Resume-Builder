@@ -206,7 +206,8 @@ class ResumeBuilder {
         this.designerConfig = getTemplatePreset(this.activeTemplate || "modern-minimal");
       }
       
-      sheet.innerHTML = renderDynamicResume(this.data, this.designerConfig);
+      let baseHtml = renderDynamicResume(this.data, this.designerConfig);
+      sheet.innerHTML = baseHtml;
       
       // Apply Advanced Theme Customizer margin
       if (themeController && themeController.config) {
@@ -1433,6 +1434,162 @@ class ResumeBuilder {
     });
     document.getElementById("btn-export-json-custom")?.addEventListener("click", () => {
       exporter.exportJSON(this.data, `${this.data.personal?.name || "Resume"}_CV.json`);
+    });
+
+    // --- AI Integrations & Prompts ---
+
+    // AI Generate drafted resume profiles
+    document.getElementById("btn-ai-generate-resume")?.addEventListener("click", async () => {
+      const promptInput = document.getElementById("ai-generate-prompt-input");
+      const promptVal = promptInput?.value?.trim();
+      if (!promptVal) {
+        alert("Please enter a target role prompt (e.g. Fintech Deeptech Product Manager).");
+        return;
+      }
+
+      const btn = document.getElementById("btn-ai-generate-resume");
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<i class="lucide-loader" style="animation: spin 1s linear infinite; display: inline-block; width: 14px; height: 14px; margin-right: 4px;"></i> Drafting...`;
+      btn.disabled = true;
+
+      try {
+        const response = await fetch("/api/ai/generate-resume", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: promptVal })
+        });
+        const resJson = await response.json();
+        if (resJson && resJson.data) {
+          workspaceBuilder.pushHistory();
+          workspaceBuilder.data = resJson.data;
+          workspaceBuilder.renderFormFields();
+          workspaceBuilder.updatePreview();
+          workspaceBuilder.saveToStorage();
+          
+          alert("✨ Gemini AI has drafted a tailored resume matching your prompt requirements!");
+        } else {
+          alert("Could not generate resume draft. Please double check model connectivity specifications.");
+        }
+      } catch (e) {
+        console.error("Generate error", e);
+        alert("An error occurred during Gemini AI communication flow.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    });
+
+    // AI Tailor Profile Summary text
+    document.getElementById("btn-ai-tailor-resume")?.addEventListener("click", async () => {
+      const roleInput = document.getElementById("ai-tailor-role-input");
+      const roleVal = roleInput?.value?.trim();
+      if (!roleVal) {
+        alert("Please specify a target role to adapt your resume focus (e.g. Senior Security Lead).");
+        return;
+      }
+
+      const btn = document.getElementById("btn-ai-tailor-resume");
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<i class="lucide-loader" style="animation: spin 1s linear infinite; display: inline-block; width: 14px; height: 14px; margin-right: 4px;"></i> Adapting...`;
+      btn.disabled = true;
+
+      try {
+        const response = await fetch("/api/ai/tailor", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resumeData: workspaceBuilder.data, targetRole: roleVal })
+        });
+        const resJson = await response.json();
+        if (resJson && resJson.success && resJson.data) {
+          workspaceBuilder.pushHistory();
+          if (resJson.data.profile) {
+            workspaceBuilder.data.profile = resJson.data.profile;
+          }
+          if (resJson.data.experience) {
+            workspaceBuilder.data.experience = resJson.data.experience;
+          }
+          workspaceBuilder.renderFormFields();
+          workspaceBuilder.updatePreview();
+          workspaceBuilder.saveToStorage();
+          
+          alert(`✨ Your Profile and Experiences have been adapted by Gemini AI for a ${roleVal} position!`);
+        } else {
+          alert("Adaptation flow encountered an issue. Please try again.");
+        }
+      } catch (e) {
+        console.error("Adapt error", e);
+        alert("Communication failed during adaptive tailoring flow.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    });
+
+    // AI ATS Vacancy match-checking
+    document.getElementById("btn-ai-ats-fit-check")?.addEventListener("click", async () => {
+      const jdTextarea = document.getElementById("ai-ats-target-jd");
+      const jdVal = jdTextarea?.value?.trim();
+      if (!jdVal) {
+        alert("Please paste the job description text to perform ATS vacancy fit-checking.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-ai-ats-fit-check");
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<i class="lucide-loader" style="animation: spin 1s linear infinite; display: inline-block; width: 14px; height: 14px; margin-right: 4px;"></i> Checking Fit...`;
+      btn.disabled = true;
+
+      try {
+        const response = await fetch("/api/ai/analyze-fit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resumeData: workspaceBuilder.data, jobDescription: jdVal })
+        });
+        const resJson = await response.json();
+        
+        const resultsDiv = document.getElementById("ai-ats-fit-results");
+        if (resultsDiv && resJson) {
+          resultsDiv.style.display = "block";
+          
+          const fitPercentage = document.getElementById("ai-fit-percentage");
+          if (fitPercentage) {
+            fitPercentage.innerText = `${resJson.fitScore || 0}%`;
+          }
+
+          const kwContainer = document.getElementById("ai-fit-missing-keywords");
+          if (kwContainer) {
+            if (resJson.missingKeywords && resJson.missingKeywords.length > 0) {
+              kwContainer.innerHTML = resJson.missingKeywords.map(kw => `
+                <span style="font-size:0.68rem; background:rgba(239, 68, 68, 0.12); color:#fc8181; border:1px solid rgba(239, 68, 68, 0.25); padding:2px 8px; border-radius:12px; font-weight:600; margin-right: 4px; margin-bottom: 4px; display: inline-block;">${kw}</span>
+              `).join('');
+            } else {
+              kwContainer.innerHTML = `<span style="font-size:0.75rem; color:var(--accent);">No major missing keywords found!</span>`;
+            }
+          }
+
+          const coachingUl = document.getElementById("ai-fit-coaching-tips");
+          if (coachingUl) {
+            const suggestions = resJson.suggestions || resJson.coaching || [];
+            if (suggestions.length > 0) {
+              coachingUl.innerHTML = suggestions.map(tip => `
+                <li style="margin-bottom:4px; line-height:1.45;">${tip}</li>
+              `).join('');
+            } else {
+              coachingUl.innerHTML = `<li style="list-style-type:none; color:var(--accent);">Great fit! Your resume is ready as is.</li>`;
+            }
+          }
+          
+          alert("✨ ATS Match Analysis successfully parsed. View your missing keywords and fit-tips in Section C below!");
+        } else {
+          alert("Match check analytical sequence failed.");
+        }
+      } catch (e) {
+        console.error("Match check error", e);
+        alert("Encountered connection faults during vacancy fit computation.");
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
     });
   }
 }
