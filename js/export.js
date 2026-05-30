@@ -38,7 +38,7 @@ export const exporter = {
             }
           </style>
           <!-- Load standard premium Display Fonts if needed -->
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap">
         </head>
         <body onload="window.print();window.close();">
           ${printContent.innerHTML}
@@ -142,7 +142,7 @@ Details: ${edu.description || "N/A"}
   <meta charset="UTF-8">
   <title>${data.personal.name || "Resume"}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap">
   <style>
     body {
       background: #fafafa;

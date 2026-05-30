@@ -3,7 +3,7 @@
    Apple, Linear & Framer inspired high-end styling using CSS Variables.
    ========================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 /* Reset & Base Elements */
 * {
@@ -1143,3 +1143,142 @@ button, input, select, textarea {
     border-bottom: 1px solid var(--border-color);
   }
 }
+
+/* ==========================================================================
+   RESUME DESIGNER ADVANCED SYSTEM STYLES
+   ========================================================================= */
+
+.designer-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 6px;
+  padding: 12px 16px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: -24px;
+  margin-left: -32px;
+  margin-right: -32px;
+  margin-bottom: 24px;
+  z-index: 20;
+  scrollbar-width: thin;
+}
+.designer-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+.designer-tabs::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+.designer-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.designer-tab-btn:hover {
+  color: var(--text-normal);
+  background: rgba(255, 255, 255, 0.03);
+}
+.designer-tab-btn.active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+.designer-tab-content {
+  display: none;
+}
+.designer-tab-content.active {
+  display: block;
+}
+
+.color-swatch-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.color-swatch-picker input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+.color-swatch-picker input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color-swatch-picker input[type="color"]::-webkit-color-swatch {
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+}
+
+.layout-grid, .preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.layout-card, .preset-card {
+  border: 1px solid var(--border-color);
+  background: rgba(255,255,255,0.01);
+  padding: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.layout-card:hover, .preset-card:hover {
+  background: rgba(255,255,255,0.03);
+  border-color: var(--accent);
+}
+.layout-card.active, .preset-card.active {
+  background: rgba(139, 92, 246, 0.05);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.section-order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.section-order-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.section-order-btn:hover {
+  color: var(--text-normal);
+  background: rgba(255,255,255,0.05);
+}
+

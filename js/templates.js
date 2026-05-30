@@ -1,577 +1,559 @@
 /* ==========================================================================
-   REVBSUS TEMPLATE LIBRARIES - 6 LUXURY DESIGNS
-   Renders user resume parameters into precise, elegant document bodies.
+   REVBSUS TEMPLATE ENGINE & ADVANCED DESIGNER SYSTEM
+   Provides 10 highly tailored templates and the Universal Layout System.
    ========================================================================= */
 
 import { themeController } from "./theme.js";
 
-export const resumeTemplates = {
-  // 1. MODERN TEMPLATE (High-Contrast Tech/SaaS layout)
-  modern: (data, theme) => {
-    const accentColor = themeController.getCurrentAccentHex();
-    return `
-      <div class="tmpl-modern" style="--tmpl-accent: ${accentColor};">
-        <header class="tmpl-header" style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--tmpl-accent); padding-bottom: 20px; margin-bottom: 24px;">
-          <div>
-            <h1 style="font-size: 2.8rem; font-weight: 800; color: #111827; letter-spacing: -1.5px; line-height: 1.1; margin: 0;">${data.personal.name || "Alex Sterling"}</h1>
-            <p style="font-size: 1.15rem; color: var(--tmpl-accent); font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px;">${data.personal.title || "Senior Creative Director"}</p>
-          </div>
-          <div style="font-size: 0.85rem; color: #4b5563; text-align: right; line-height: 1.5;">
-            <div>${data.personal.email || "sterling@revbsus.io"}</div>
-            <div>${data.personal.phone || "+1 (555) 303-1294"}</div>
-            <div>${data.personal.address || "San Francisco, CA"}</div>
-            <div>${data.personal.website || "www.sterling-design.io"}</div>
-          </div>
-        </header>
+// Inline SVGs to avoid runtime dependency issues inside dynamic render frames
+export const iconSVGs = {
+  "lucide-user": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  "lucide-briefcase": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+  "lucide-folder": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+  "lucide-graduation-cap": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>`,
+  "lucide-wrench": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+  "lucide-languages": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><path d="m5 8 6 6M4 14h6M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>`,
+  "lucide-award": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+  "lucide-award-star": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`,
+  "lucide-star": `<svg style="width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; vertical-align:middle; margin-right:6px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+};
 
-        <div class="tmpl-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
-          <!-- Left Column (Core info) -->
-          <div>
-            ${data.profile ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 12px;">Executive Summary</h3>
-                <p style="font-size: 0.92rem; color: #374151; line-height: 1.6;">${data.profile}</p>
-              </section>
-            ` : ''}
-
-            ${data.experience && data.experience.length ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 16px;">Professional Experience</h3>
-                ${data.experience.map(exp => `
-                  <div style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                      <h4 style="font-size: 1rem; color: #111827; font-weight: 700;">${exp.role || "Lead Designer"}</h4>
-                      <span style="font-size: 0.8rem; font-weight: 600; color: var(--tmpl-accent);">${exp.startDate || "2024"} — ${exp.endDate || "Present"}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #4b5563; margin-bottom: 6px; font-weight: 500;">
-                      <span>${exp.company || "Linear Technologies"}</span>
-                      <span>${exp.location || "Remote"}</span>
-                    </div>
-                    <p style="font-size: 0.88rem; color: #374151; line-height: 1.5;">${exp.description || "Spearheaded complex design system initiatives and scaled product aesthetics across multiple visual suites."}</p>
-                  </div>
-                `).join('')}
-              </section>
-            ` : ''}
-
-            ${data.projects && data.projects.length ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 16px;">Representative Projects</h3>
-                ${data.projects.map(proj => `
-                  <div style="margin-bottom: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                      <h4 style="font-size: 0.95rem; color: #111827; font-weight: 700;">${proj.title || "Vanguard UI System"}</h4>
-                      ${proj.url ? `<span style="font-size: 0.8rem; color: var(--tmpl-accent); font-family: var(--font-mono);">${proj.url}</span>` : ''}
-                    </div>
-                    <p style="font-size: 0.88rem; color: #374151; line-height: 1.5; margin-bottom: 4px;">${proj.description || "Created and optimized the company design blueprints."}</p>
-                    ${proj.techStack ? `<div style="font-size: 0.78rem; font-family: var(--font-mono); color: #6b7280;">Stack: ${proj.techStack}</div>` : ''}
-                  </div>
-                `).join('')}
-              </section>
-            ` : ''}
-          </div>
-
-          <!-- Right Column (Meta info, Skills, Education) -->
-          <div>
-            ${data.skills && data.skills.length ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 16px;">Core Competencies</h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                  ${data.skills.map(skill => `
-                    <span style="font-size: 0.8rem; background: #f3f4f6; color: #111827; font-weight: 500; border-left: 3px solid var(--tmpl-accent); padding: 5px 10px; border-radius: 4px;">
-                      ${skill.name || "UI Design"}
-                    </span>
-                  `).join('')}
-                </div>
-              </section>
-            ` : ''}
-
-            ${data.education && data.education.length ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 16px;">Education</h3>
-                ${data.education.map(edu => `
-                  <div style="margin-bottom: 16px;">
-                    <div style="font-size: 0.82rem; font-weight: 600; color: var(--tmpl-accent); margin-bottom: 2px;">${edu.startDate || "2020"} — ${edu.endDate || "2024"}</div>
-                    <h4 style="font-size: 0.92rem; color: #111827; font-weight: 700;">${edu.degree || "M.S. in Interaction Design"}</h4>
-                    <p style="font-size: 0.85rem; color: #4b5563;">${edu.school || "Stanford University"}</p>
-                    ${edu.description ? `<p style="font-size: 0.8rem; color: #6b7280; margin-top: 4px;">${edu.description}</p>` : ''}
-                  </div>
-                `).join('')}
-              </section>
-            ` : ''}
-
-            ${data.languages && data.languages.length ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 12px;">Languages</h3>
-                ${data.languages.map(lang => `
-                  <div style="display: flex; justify-content: space-between; font-size: 0.88rem; color: #374151; margin-bottom: 6px;">
-                    <span style="font-weight: 600;">${lang.name || "English"}</span>
-                    <span style="color: #6b7280;">${lang.proficiency || "Native"}</span>
-                  </div>
-                `).join('')}
-              </section>
-            ` : ''}
-
-            ${data.certifications && data.certifications.length ? `
-              <section style="margin-bottom: 28px;">
-                <h3 style="font-size: 1.1rem; color: #111827; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 12px;">Certifications</h3>
-                ${data.certifications.map(cert => `
-                  <div style="margin-bottom: 10px;">
-                    <div style="font-size: 0.88rem; font-weight: 700; color: #111827;">${cert.title || ""}</div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #6b7280;">
-                      <span>${cert.issuer || ""}</span>
-                      <span>${cert.date || ""}</span>
-                    </div>
-                  </div>
-                `).join('')}
-              </section>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  },
-
-  // 2. EXECUTIVE TEMPLATE (Prestigious, Centered, Serif Typography)
-  executive: (data, theme) => {
-    return `
-      <div class="tmpl-executive" style="text-align: center; color: #1c1917;">
-        <header style="margin-bottom: 32px; border-bottom: 1px solid #d6d3d1; padding-bottom: 24px;">
-          <h1 style="font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 700; color: #1c1917; margin-bottom: 8px;">${data.personal.name || "Charles Windsor"}</h1>
-          <p style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; color: #78716c; font-weight: 600; margin-bottom: 12px;">${data.personal.title || "Chief Operating Officer"}</p>
-          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; font-size: 0.82rem; color: #44403c;">
-            <span>${data.personal.email || "charles@alliance.org"}</span>
-            <span>•</span>
-            <span>${data.personal.phone || "+1 (555) 700-1192"}</span>
-            <span>•</span>
-            <span>${data.personal.address || "New York, NY"}</span>
-            <span>•</span>
-            <span>${data.personal.website || "www.charles-windsor.org"}</span>
-          </div>
-        </header>
-
-        ${data.profile ? `
-          <section style="margin-bottom: 32px; text-align: justify;">
-            <p style="font-size: 0.95rem; line-height: 1.7; color: #292524; font-style: italic; max-width: 90%; margin: 0 auto;">"${data.profile}"</p>
-          </section>
-        ` : ''}
-
-        <div style="text-align: left; max-width: 90%; margin: 0 auto;">
-          ${data.experience && data.experience.length ? `
-            <section style="margin-bottom: 32px;">
-              <h2 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px double #d6d3d1; padding-bottom: 6px; margin-bottom: 18px; color: #1c1917;">Strategic Career Milestones</h2>
-              ${data.experience.map(exp => `
-                <div style="margin-bottom: 24px;">
-                  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                    <span style="font-size: 1.05rem; font-weight: 700; color: #1c1917;">${exp.role || "Executive Vice President"}</span>
-                    <span style="font-size: 0.85rem; font-family: var(--font-mono); color: #78716c;">${exp.startDate || "2020"} — ${exp.endDate || "Present"}</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; font-size: 0.88rem; color: #57534e; margin-bottom: 8px; font-weight: 550; font-style: italic;">
-                    <span>${exp.company || "Atlas Financial Group"}</span>
-                    <span>${exp.location || "New York"}</span>
-                  </div>
-                  <p style="font-size: 0.9rem; color: #292524; line-height: 1.6;">${exp.description || "Pioneered operational re-architecture, improving delivery velocities by 35% and mitigating over $2.5MM in yearly infrastructure deficits."}</p>
-                </div>
-              `).join('')}
-            </section>
-          ` : ''}
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 24px;">
-            <div>
-              ${data.education && data.education.length ? `
-                <section style="margin-bottom: 32px;">
-                  <h2 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px double #d6d3d1; padding-bottom: 6px; margin-bottom: 18px; color: #1c1917;">Academic Pedigree</h2>
-                  ${data.education.map(edu => `
-                    <div style="margin-bottom: 16px;">
-                      <h4 style="font-size: 0.95rem; color: #1c1917; font-weight: 700;">${edu.degree || "M.B.A. in Finance"}</h4>
-                      <p style="font-size: 0.88rem; color: #57534e;">${edu.school || "Columbia Business School"} <span style="float: right;">${edu.endDate || "2020"}</span></p>
-                    </div>
-                  `).join('')}
-                </section>
-              ` : ''}
-            </div>
-
-            <div>
-              ${data.skills && data.skills.length ? `
-                <section style="margin-bottom: 24px;">
-                  <h2 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px double #d6d3d1; padding-bottom: 6px; margin-bottom: 18px; color: #1c1917;">Leadership Domains</h2>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    ${data.skills.map(skill => `
-                      <span style="font-size: 0.85rem; color: #292524; font-weight: 500;">• ${skill.name || "Strategic Planning"}</span>
-                    `).join('')}
-                  </div>
-                </section>
-              ` : ''}
-
-              ${data.languages && data.languages.length ? `
-                <section style="margin-bottom: 24px;">
-                  <h2 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px double #d6d3d1; padding-bottom: 6px; margin-bottom: 12px; color: #1c1917;">Languages</h2>
-                  <div style="font-size: 0.88rem; color: #44403c; line-height: 1.5;">
-                    ${data.languages.map(lang => `
-                      <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span style="font-weight: 600;">${lang.name}</span>
-                        <span style="color: #78716c;">${lang.proficiency}</span>
-                      </div>
-                    `).join('')}
-                  </div>
-                </section>
-              ` : ''}
-
-              ${data.certifications && data.certifications.length ? `
-                <section>
-                  <h2 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px double #d6d3d1; padding-bottom: 6px; margin-bottom: 12px; color: #1c1917;">Certifications</h2>
-                  <div style="font-size: 0.88rem; color: #44403c; line-height: 1.5;">
-                    ${data.certifications.map(cert => `
-                      <div style="margin-bottom: 6px;">
-                        <div style="font-weight: 600;">${cert.title}</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #78716c;">
-                          <span>${cert.issuer}</span>
-                          <span>${cert.date}</span>
-                        </div>
-                      </div>
-                    `).join('')}
-                  </div>
-                </section>
-              ` : ''}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  },
-
-  // 3. ATS MINIMAL TEMPLATE (No Colors, Strict, Black & White, Highly Machine Readable)
-  ats: (data, theme) => {
-    return `
-      <div class="tmpl-ats" style="font-family: Arial, sans-serif; color: #000000; line-height: 1.4; font-size: 10pt;">
-        <div style="text-align: center; margin-bottom: 18px;">
-          <h1 style="font-size: 18pt; font-weight: bold; margin: 0 0 4px 0; text-transform: uppercase;">${data.personal.name || "Samantha Vance"}</h1>
-          <div style="font-size: 9.5pt; margin-bottom: 4px;">
-            ${data.personal.address || "Austin, TX"} | ${data.personal.phone || "(512) 555-8392"} | ${data.personal.email || "samantha.vance@techmail.com"}
-          </div>
-          ${data.personal.website ? `<div style="font-size: 9.5pt;">${data.personal.website}</div>` : ''}
-        </div>
-
-        ${data.profile ? `
-          <div style="margin-bottom: 16px;">
-            <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 6px;">Professional Summary</div>
-            <p style="margin: 0; text-align: justify;">${data.profile}</p>
-          </div>
-        ` : ''}
-
-        ${data.experience && data.experience.length ? `
-          <div style="margin-bottom: 16px;">
-            <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 8px;">Professional Experience</div>
-            ${data.experience.map(exp => `
-              <div style="margin-bottom: 12px;">
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 2px;">
-                  <tr>
-                    <td style="font-weight: bold; text-align: left;">${exp.company || "Amazon Web Services"}</td>
-                    <td style="text-align: right; font-weight: bold;">${exp.startDate || "2021"} - ${exp.endDate || "Present"}</td>
-                  </tr>
-                  <tr>
-                    <td style="font-style: italic; text-align: left;">${exp.role || "Cloud Infrastructure Engineer"}</td>
-                    <td style="text-align: right; font-style: italic;">${exp.location || "Seattle, WA"}</td>
-                  </tr>
-                </table>
-                <p style="margin: 0 0 0 12px; text-align: justify;">${exp.description || "Supported migration pipelines and increased stack delivery by 20% using AWS tooling and Terraform scripts."}</p>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        ${data.projects && data.projects.length ? `
-          <div style="margin-bottom: 16px;">
-            <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 8px;">Technical Projects</div>
-            ${data.projects.map(proj => `
-              <div style="margin-bottom: 8px;">
-                <div style="font-weight: bold;">${proj.title || "Orion Pipeline Tool"} ${proj.url ? `(${proj.url})` : ''}</div>
-                <p style="margin: 0 0 0 12px;">${proj.description || "Constructed responsive build workflows."} ${proj.techStack ? `Technologies: ${proj.techStack}` : ''}</p>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-          <tr>
-            ${data.education && data.education.length ? `
-              <td style="vertical-align: top; width: 50%; padding-right: 15px;">
-                <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 6px;">Education</div>
-                ${data.education.map(edu => `
-                  <div style="margin-bottom: 8px;">
-                    <div style="font-weight: bold;">${edu.degree || "B.S. Computer Science"}</div>
-                    <div>${edu.school || "University of Texas at Austin"}</div>
-                    <div style="font-style: italic; font-size: 9pt;">Graduated: ${edu.endDate || "2021"}</div>
-                  </div>
-                `).join('')}
-              </td>
-            ` : ''}
-
-            ${data.skills && data.skills.length ? `
-              <td style="vertical-align: top; width: 50%;">
-                <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 6px;">Technical Skills</div>
-                <p style="margin: 0; line-height: 1.5;">
-                  ${data.skills.map(s => s.name || "").join(', ')}
-                </p>
-              </td>
-            ` : ''}
-          </tr>
-        </table>
-
-        ${(data.languages && data.languages.length) || (data.certifications && data.certifications.length) ? `
-          <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-            <tr>
-              ${data.languages && data.languages.length ? `
-                <td style="vertical-align: top; width: 50%; padding-right: 15px;">
-                  <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 6px;">Languages</div>
-                  <p style="margin: 0; line-height: 1.5;">
-                    ${data.languages.map(l => `${l.name} (${l.proficiency})`).join(', ')}
-                  </p>
-                </td>
-              ` : ''}
-
-              ${data.certifications && data.certifications.length ? `
-                <td style="vertical-align: top; width: 50%;">
-                  <div style="font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #000000; font-size: 11pt; margin-bottom: 6px;">Certifications</div>
-                  ${data.certifications.map(c => `
-                    <div style="margin-bottom: 4px;">
-                      <span style="font-weight: bold;">${c.title}</span> — <span>${c.issuer}</span> (${c.date})
-                    </div>
-                  `).join('')}
-                </td>
-              ` : ''}
-            </tr>
-          </table>
-        ` : ''}
-      </div>
-    `;
-  },
-
-  // 4. MINIMAL TEMPLATE (Fine margins, elegant structural asymmetry)
-  minimal: (data, theme) => {
-    return `
-      <div class="tmpl-minimal" style="color: #374151; font-family: 'Inter', sans-serif;">
-        <div style="display: flex; gap: 40px;">
-          <!-- Left Column: Name & details -->
-          <div style="width: 30%; border-right: 1px solid #e5e7eb; padding-right: 30px;">
-            <h1 style="font-size: 2.2rem; font-weight: 700; color: #111827; letter-spacing: -1px; margin-bottom: 10px;">${data.personal.name || "Kerr Ryan"}</h1>
-            <p style="font-size: 0.95rem; color: #9ca3af; margin-bottom: 24px;">${data.personal.title || "Staff Architect"}</p>
-            
-            <div style="font-size: 0.8rem; color: #6b7280; display: flex; flex-direction: column; gap: 8px; margin-top: 30px;">
-              <div>sterling@office.me</div>
-              <div>+11 80-2394a</div>
-              <div>Berlin, DE</div>
-              <div>${data.personal.website || ""}</div>
-            </div>
-
-            ${data.languages && data.languages.length ? `
-              <div style="margin-top: 30px;">
-                <h3 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: #9ca3af; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px;">Languages</h3>
-                ${data.languages.map(lang => `
-                  <div style="font-size: 0.82rem; color: #4b5563; display: flex; justify-content: space-between; margin-bottom: 4px;">
-                    <span style="font-weight: 600;">${lang.name}</span>
-                    <span>${lang.proficiency}</span>
-                  </div>
-                `).join('')}
-              </div>
-            ` : ''}
-
-            ${data.certifications && data.certifications.length ? `
-              <div style="margin-top: 30px;">
-                <h3 style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: #9ca3af; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px;">Certifications</h3>
-                ${data.certifications.map(cert => `
-                  <div style="font-size: 0.82rem; color: #4b5563; margin-bottom: 8px; line-height: 1.3;">
-                    <span style="font-weight: 600; display: block; color: #111827;">${cert.title}</span>
-                    <span>${cert.issuer} (${cert.date})</span>
-                  </div>
-                `).join('')}
-              </div>
-            ` : ''}
-          </div>
-
-          <!-- Right Column: Exp & details -->
-          <div style="flex: 1;">
-            ${data.profile ? `<p style="font-size: 0.9rem; font-style: italic; line-height: 1.6; margin-bottom: 24px; color: #4b5563;">${data.profile}</p>` : ''}
-
-            ${data.experience && data.experience.length ? `
-              <div style="margin-bottom: 24px;">
-                <h3 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #9ca3af; font-weight: 700; margin-bottom: 16px;">Core Experience</h3>
-                ${data.experience.map(exp => `
-                  <div style="margin-bottom: 20px;">
-                    <div style="font-size: 0.8rem; color: #9ca3af; font-family: var(--font-mono); margin-bottom: 2px;">${exp.startDate || "2020"} — ${exp.endDate || "Present"}</div>
-                    <div style="font-size: 0.95rem; font-weight: 600; color: #111827;">${exp.role || "Lead Architect"} — ${exp.company || "Studio Berlin"}</div>
-                    <p style="font-size: 0.85rem; color: #4b5563; line-height: 1.5; margin-top: 4px;">${exp.description || "Drafted complex CAD models and secured green permits."}</p>
-                  </div>
-                `).join('')}
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  },
-
-  // 5. CREATIVE TEMPLATE (Futuristic, Neo-Gothic, Space Grotesk Font Accent)
-  creative: (data, theme) => {
-    const accentColor = themeController.getCurrentAccentHex();
-    return `
-      <div class="tmpl-creative" style="--tmpl-accent: ${accentColor}; font-family: 'Space Grotesk', sans-serif; color: #09090b;">
-        <div style="background: var(--tmpl-accent); color: white; margin: -48px -48px 32px -48px; padding: 48px; border-bottom: 6px solid #000000;">
-          <h1 style="font-size: 3.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: -2px; margin: 0; line-height: 1;">${data.personal.name || "Sasha Grey"}</h1>
-          <p style="font-size: 1.3rem; font-weight: 500; font-family: var(--font-mono); text-transform: uppercase; color: rgba(255,255,255,0.85); margin-top: 8px;">${data.personal.title || "AI Systems Engineer"}</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 24px; font-size: 0.85rem; margin-top: 24px; font-family: var(--font-mono);">
-            <span>EMAIL: ${data.personal.email || "sasha@cyber.org"}</span>
-            <span>CELL: ${data.personal.phone || "+1-800-NEON"}</span>
-            <span>COORD: ${data.personal.address || "Neon District"}</span>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 36px;">
-          <div>
-            ${data.profile ? `
-              <section style="margin-bottom: 24px; background: #fafafa; border: 2px solid #000; padding: 20px; border-radius: 8px;">
-                <h3 style="font-size: 1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Transmission Log</h3>
-                <p style="font-size: 0.9rem; line-height: 1.6;">${data.profile}</p>
-              </section>
-            ` : ''}
-
-            ${data.experience && data.experience.length ? `
-              <section style="margin-bottom: 30px;">
-                <h3 style="font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border-bottom: 4px solid #000000; padding-bottom: 4px; margin-bottom: 16px;">System Logs (Work Loop)</h3>
-                ${data.experience.map(exp => `
-                  <div style="margin-bottom: 20px; border-left: 3px solid var(--tmpl-accent); padding-left: 16px;">
-                    <h4 style="font-size: 1rem; font-weight: 700;">${exp.role || "AI Engineer"} @ ${exp.company || "Synthetix"}</h4>
-                    <div style="font-size: 0.8rem; font-family: var(--font-mono); color: #555; margin-bottom: 6px;">[${exp.startDate || "2020"} // ${exp.endDate || "Present"}]</div>
-                    <p style="font-size: 0.88rem; line-height: 1.5;">${exp.description || "Optimizing model inference loops."}</p>
-                  </div>
-                `).join('')}
-              </section>
-            ` : ''}
-          </div>
-
-          <div>
-            ${data.skills && data.skills.length ? `
-              <section style="margin-bottom: 30px; background: #fafafa; border: 2px solid #000; padding: 20px; border-radius: 8px;">
-                <h3 style="font-size: 1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; font-family: var(--font-mono);">Matrix Arsenal</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  ${data.skills.map(s => `
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-family: var(--font-mono);">
-                      <span>${s.name || "Cyber Defense"}</span>
-                      <span style="color: var(--tmpl-accent);">[COMPLETE]</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </section>
-            ` : ''}
-
-            ${data.languages && data.languages.length ? `
-              <section style="margin-bottom: 30px; background: #fafafa; border: 2px solid #000; padding: 20px; border-radius: 8px;">
-                <h3 style="font-size: 1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; font-family: var(--font-mono);">Languages</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  ${data.languages.map(l => `
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-family: var(--font-mono);">
-                      <span>${l.name}</span>
-                      <span style="color: var(--tmpl-accent); font-weight: 600;">${l.proficiency}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </section>
-            ` : ''}
-
-            ${data.certifications && data.certifications.length ? `
-              <section style="margin-bottom: 30px; background: #fafafa; border: 2px solid #000; padding: 20px; border-radius: 8px;">
-                <h3 style="font-size: 1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; font-family: var(--font-mono);">Credentials</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                  ${data.certifications.map(c => `
-                    <div style="font-size: 0.85rem; font-family: var(--font-mono); line-height: 1.35;">
-                      <div style="font-weight: bold; color: var(--tmpl-accent);">${c.title}</div>
-                      <div style="display: flex; justify-content: space-between; color: #555; font-size: 0.78rem;">
-                        <span>${c.issuer}</span>
-                        <span>[${c.date}]</span>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              </section>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  },
-
-  // 6. CORPORATE TEMPLATE (Classic Times Serif layout, high formal alignment)
-  corporate: (data, theme) => {
-    return `
-      <div class="tmpl-corporate" style="font-family: 'Times New Roman', Times, serif; color: #111111; line-height: 1.5; font-size: 10.5pt;">
-        <div style="text-align: center; border-bottom: 1px solid #111111; padding-bottom: 12px; margin-bottom: 18px;">
-          <h1 style="font-size: 22pt; font-family: 'Times New Roman', Times, serif; font-weight: bold; margin: 0 0 6px 0;">${data.personal.name || "Jonathan J. Mercer"}</h1>
-          <div style="font-size: 10pt; line-height: 1.4;">
-            ${data.personal.address || "Chicago, IL"} <br>
-            Phone: ${data.personal.phone || "(312) 555-0392"} | Email: ${data.personal.email || "jonathan.mercer@corp.com"}
-          </div>
-        </div>
-
-        ${data.profile ? `
-          <div style="margin-bottom: 18px;">
-            <p style="font-size: 10.5pt; text-align: justify; margin: 0; font-style: italic;">${data.profile}</p>
-          </div>
-        ` : ''}
-
-        ${data.experience && data.experience.length ? `
-          <div style="margin-bottom: 18px;">
-            <h3 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #111111; padding-bottom: 2px; margin: 0 0 10px 0; text-transform: uppercase;">Professional Practice</h3>
-            ${data.experience.map(exp => `
-              <div style="margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; font-weight: bold;">
-                  <span>${exp.company || "Mercer Consulting LLC"}</span>
-                  <span>${exp.startDate || "2019"} – ${exp.endDate || "Present"}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-style: italic; margin-bottom: 4px;">
-                  <span>${exp.role || "Senior Principal Advisor"}</span>
-                  <span>${exp.location || "Chicago"}</span>
-                </div>
-                <p style="text-align: justify; margin: 0; font-size: 10pt;">${exp.description || "Managed organizational client consultations representing multi-billion assets."}</p>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        ${data.education && data.education.length ? `
-          <div style="margin-bottom: 18px;">
-            <h3 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #111111; padding-bottom: 2px; margin: 0 0 10px 0; text-transform: uppercase;">Educational Qualifications</h3>
-            ${data.education.map(edu => `
-              <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; font-weight: bold;">
-                  <span>${edu.school || "University of Chicago"}</span>
-                  <span>Graduated: ${edu.endDate || "2019"}</span>
-                </div>
-                <div style="font-style: italic;">${edu.degree || "M.S. Economics"}</div>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        ${data.certifications && data.certifications.length ? `
-          <div style="margin-bottom: 18px;">
-            <h3 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #111111; padding-bottom: 2px; margin: 0 0 10px 0; text-transform: uppercase;">Certifications & Organizations</h3>
-            ${data.certifications.map(cert => `
-              <div style="margin-bottom: 8px; display: flex; justify-content: space-between;">
-                <span><span style="font-weight: bold;">${cert.title}</span> — ${cert.issuer}</span>
-                <span style="font-style: italic;">${cert.date}</span>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        ${data.languages && data.languages.length ? `
-          <div style="margin-bottom: 18px;">
-            <h3 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #111111; padding-bottom: 2px; margin: 0 0 10px 0; text-transform: uppercase;">Languages</h3>
-            <p style="margin: 0;">
-              ${data.languages.map(l => `<span style="font-weight: bold;">${l.name}</span> (${l.proficiency})`).join('  |  ')}
-            </p>
-          </div>
-        ` : ''}
-      </div>
-    `;
+function hexToRgb(hex) {
+  if (!hex) return "17, 24, 39";
+  let c = hex.replace("#", "").trim();
+  if (c.length === 3) {
+    c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
   }
+  const num = parseInt(c, 16);
+  if (isNaN(num)) return "17, 24, 39";
+  return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+}
+
+export function getTemplatePreset(key) {
+  const base = {
+    alignments: {
+      header: "left",
+      sectionTitles: "left",
+      bodyContent: "left",
+      contactInfo: "left"
+    },
+    colors: {
+      primary: "#111827",
+      secondary: "#4b5563",
+      accent: "#3b82f6",
+      text: "#374151",
+      background: "#ffffff"
+    },
+    typography: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      lineHeight: 1.5,
+      letterSpacing: 0,
+      fontWeightBody: "400"
+    },
+    headerStyle: {
+      fontFamily: "Inter",
+      fontSizeName: 32,
+      fontWeightName: "800",
+      colorName: "#111827",
+      fontSizeTitle: 16,
+      fontWeightTitle: "600",
+      colorTitle: "#3b82f6",
+      spacing: 12,
+      alignment: "left",
+      background: "transparent",
+      borderStyle: "none",
+      borderColor: "#e5e7eb"
+    },
+    globalHeadersStyle: "on",
+    sectionHeaders: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: "#111827",
+      fontWeight: "700",
+      letterSpacing: 1,
+      borderStyle: "solid-bottom",
+      backgroundStyle: "transparent",
+      alignment: "left"
+    },
+    sections: {
+      profile: { title: "Professional Summary", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-user", dividerStyle: "solid-bottom", hidden: false },
+      experience: { title: "Work Experience", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-briefcase", dividerStyle: "solid-bottom", hidden: false },
+      projects: { title: "Projects", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-folder", dividerStyle: "solid-bottom", hidden: false },
+      education: { title: "Education", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-graduation-cap", dividerStyle: "solid-bottom", hidden: false },
+      skills: { title: "Skills Matrix", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-wrench", dividerStyle: "solid-bottom", hidden: false },
+      languages: { title: "Languages", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-languages", dividerStyle: "solid-bottom", hidden: false },
+      certifications: { title: "Certifications", color: "#111827", fontFamily: "Inter", fontSize: 14, fontWeight: "700", alignment: "left", icon: "lucide-award", dividerStyle: "solid-bottom", hidden: false }
+    },
+    sectionOrder: ["profile", "experience", "projects", "education", "skills", "languages", "certifications"]
+  };
+
+  switch (key) {
+    case "ats-prof":
+      base.layout = "single-column";
+      base.typography.fontFamily = "Open Sans";
+      base.colors.primary = "#000000";
+      base.colors.secondary = "#333333";
+      base.colors.accent = "#000000";
+      base.colors.text = "#000000";
+      base.headerStyle.alignment = "center";
+      base.headerStyle.borderStyle = "none";
+      base.alignments.header = "center";
+      base.alignments.contactInfo = "center";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#000000";
+      base.sectionHeaders.fontSize = 13;
+      base.sectionHeaders.letterSpacing = 1.5;
+      break;
+
+    case "modern-minimal":
+      base.layout = "two-column";
+      base.typography.fontFamily = "Poppins";
+      base.colors.primary = "#059669"; // Emerald focus
+      base.colors.accent = "#10b981";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "Poppins";
+      base.headerStyle.colorTitle = "#10b981";
+      base.sectionHeaders.borderStyle = "bullet";
+      base.sectionHeaders.color = "#059669";
+      break;
+
+    case "exec-luxury":
+      base.layout = "executive";
+      base.typography.fontFamily = "Playfair Display";
+      base.typography.fontWeightBody = "400";
+      base.colors.primary = "#7c2d12"; // Mahogany Red
+      base.colors.accent = "#b45309";
+      base.colors.background = "#fdfbf7"; // Ivory Paper Look
+      base.headerStyle.fontFamily = "Playfair Display";
+      base.headerStyle.alignment = "center";
+      base.headerStyle.colorName = "#7c2d12";
+      base.headerStyle.borderStyle = "double-bottom";
+      base.headerStyle.borderColor = "#7c2d12";
+      base.alignments.header = "center";
+      base.alignments.contactInfo = "center";
+      base.sectionHeaders.borderStyle = "double-bottom";
+      base.sectionHeaders.color = "#7c2d12";
+      base.sectionHeaders.alignment = "center";
+      break;
+
+    case "corp-elite":
+      base.layout = "single-column";
+      base.typography.fontFamily = "Lora";
+      base.colors.primary = "#1e3a8a"; // Dark Navy
+      base.colors.accent = "#2563eb";
+      base.colors.secondary = "#4b5563";
+      base.headerStyle.fontFamily = "Lora";
+      base.headerStyle.colorName = "#1e3a8a";
+      base.headerStyle.borderStyle = "solid-bottom";
+      base.headerStyle.borderColor = "#2563eb";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#1e3a8a";
+      break;
+
+    case "creative-design":
+      base.layout = "grid-layout";
+      base.typography.fontFamily = "Montserrat";
+      base.colors.primary = "#db2777"; // Creative Pink
+      base.colors.accent = "#9d174d";
+      base.colors.background = "#fafaf9";
+      base.headerStyle.fontFamily = "Montserrat";
+      base.headerStyle.alignment = "left";
+      base.headerStyle.colorName = "#db2777";
+      base.headerStyle.colorTitle = "#9d174d";
+      base.sectionHeaders.borderStyle = "box";
+      base.sectionHeaders.color = "#db2777";
+      break;
+
+    case "dev-resume":
+      base.layout = "left-sidebar";
+      base.typography.fontFamily = "JetBrains Mono";
+      base.colors.primary = "#0284c7"; // Tech Blue
+      base.colors.accent = "#0ea5e9";
+      base.colors.secondary = "#64748b";
+      base.headerStyle.fontFamily = "JetBrains Mono";
+      base.headerStyle.colorName = "#0f172a";
+      base.headerStyle.colorTitle = "#0284c7";
+      base.sectionHeaders.borderStyle = "bullet";
+      base.sectionHeaders.color = "#0284c7";
+      break;
+
+    case "pm-resume":
+      base.layout = "two-column";
+      base.typography.fontFamily = "DM Sans";
+      base.colors.primary = "#4f46e5"; // Indigo
+      base.colors.accent = "#6366f1";
+      base.colors.secondary = "#5c6370";
+      base.headerStyle.fontFamily = "DM Sans";
+      base.headerStyle.colorName = "#111827";
+      base.headerStyle.colorTitle = "#4f46e5";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#4f46e5";
+      break;
+
+    case "marketing-resume":
+      base.layout = "grid-layout";
+      base.typography.fontFamily = "Poppins";
+      base.colors.primary = "#ea580c"; // Orange
+      base.colors.accent = "#f97316";
+      base.headerStyle.fontFamily = "Poppins";
+      base.headerStyle.colorName = "#ea580c";
+      base.headerStyle.colorTitle = "#ea580c";
+      base.sectionHeaders.borderStyle = "box";
+      base.sectionHeaders.color = "#ea580c";
+      break;
+
+    case "student-resume":
+      base.layout = "single-column";
+      base.typography.fontFamily = "Open Sans";
+      base.colors.primary = "#0891b2"; // Cyan
+      base.colors.accent = "#0e7490";
+      base.headerStyle.fontFamily = "Open Sans";
+      base.headerStyle.colorName = "#0891b2";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#0891b2";
+      break;
+
+    case "freelancer-resume":
+      base.layout = "right-sidebar";
+      base.typography.fontFamily = "Montserrat";
+      base.colors.primary = "#7c3aed"; // Purple
+      base.colors.accent = "#6d28d9";
+      base.headerStyle.fontFamily = "Montserrat";
+      base.headerStyle.colorName = "#7c3aed";
+      base.sectionHeaders.borderStyle = "solid-bottom";
+      base.sectionHeaders.color = "#7c3aed";
+      break;
+  }
+
+  return base;
+}
+
+function renderHeader(data, config) {
+  const hStyle = config.headerStyle || {};
+  const p = data.personal || {};
+  
+  const alignment = hStyle.alignment || "center";
+  const fontFamily = hStyle.fontFamily || config.typography?.fontFamily || "Inter";
+  
+  const borderBottom = hStyle.borderStyle === "solid-bottom" 
+    ? `border-bottom: 2px solid ${hStyle.borderColor || '#e5e7eb'}; padding-bottom: 12px;`
+    : hStyle.borderStyle === "double-bottom"
+    ? `border-bottom: 4px double ${hStyle.borderColor || '#e5e7eb'}; padding-bottom: 12px;`
+    : "";
+
+  const containerStyle = `
+    font-family: '${fontFamily}', sans-serif;
+    text-align: ${alignment};
+    background: ${hStyle.background || 'transparent'};
+    margin-bottom: ${hStyle.spacing || 12}px;
+    ${borderBottom}
+  `;
+
+  const contactAlignment = alignment === "center" ? "justify-content: center;" : alignment === "right" ? "justify-content: flex-end;" : "justify-content: flex-start;";
+
+  return `
+    <header style="${containerStyle}">
+      <div>
+        <h1 style="font-size: ${hStyle.fontSizeName || 32}px; font-weight: ${hStyle.fontWeightName || '800'}; color: ${hStyle.colorName || config.colors?.primary || '#111827'}; margin: 0; letter-spacing: -0.5px; line-height: 1.1;">
+          ${p.name || "Alex Sterling"}
+        </h1>
+        <p style="font-size: ${hStyle.fontSizeTitle || 16}px; font-weight: ${hStyle.fontWeightTitle || '600'}; color: ${hStyle.colorTitle || config.colors?.accent || '#3b82f6'}; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px;">
+          ${p.title || ""}
+        </p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px 16px; ${contactAlignment} font-size: 0.82rem; color: ${config.colors?.secondary || '#4b5563'}; margin-top: 10px; line-height: 1.4;">
+        ${p.email ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${p.email}</span>` : ""}
+        ${p.phone ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>${p.phone}</span>` : ""}
+        ${p.address ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${p.address}</span>` : ""}
+        ${p.website ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>${p.website}</span>` : ""}
+      </div>
+    </header>
+  `;
+}
+
+function renderSectionTitle(style) {
+  const align = style.alignment || "left";
+  const fontFamily = style.fontFamily || "Inter";
+  const color = style.color || "#111827";
+  const iconMarkup = style.icon && iconSVGs[style.icon] ? iconSVGs[style.icon] : "";
+
+  let titleStyle = `
+    font-family: '${fontFamily}', sans-serif;
+    color: ${color};
+    font-size: ${style.fontSize || 14}px;
+    font-weight: ${style.fontWeight || '700'};
+    text-transform: uppercase;
+    letter-spacing: ${style.letterSpacing || 1}px;
+    display: inline-flex;
+    align-items: center;
+  `;
+
+  let outerStyle = `
+    text-align: ${align};
+    margin-bottom: 10px;
+    width: 100%;
+  `;
+
+  const border = style.borderStyle || "solid-bottom";
+
+  if (border === "solid-bottom") {
+    outerStyle += `border-bottom: 1.5px solid ${color}; padding-bottom: 4px;`;
+  } else if (border === "double-bottom") {
+    outerStyle += `border-bottom: 4.5px double ${color}; padding-bottom: 4px;`;
+  } else if (border === "solid-top") {
+    outerStyle += `border-top: 1.5px solid ${color}; padding-top: 6px;`;
+  } else if (border === "bullet") {
+    outerStyle += `border-left: 4px solid ${color}; padding-left: 10px;`;
+  } else if (border === "box") {
+    outerStyle += `background: rgba(${hexToRgb(color)}, 0.08); padding: 6px 12px; border-radius: 4px;`;
+  }
+
+  return `
+    <div style="${outerStyle}">
+      <span style="${titleStyle}">
+        ${iconMarkup} ${style.title}
+      </span>
+    </div>
+  `;
+}
+
+function renderSection(key, data, style, config) {
+  const sectionHeaderHtml = renderSectionTitle(style);
+  let contentHtml = "";
+
+  const textStyle = `font-size: 0.88rem; line-height: ${config.typography?.lineHeight || 1.5}; color: ${config.colors?.text || '#333333'}; text-align: ${config.alignments?.bodyContent || 'left'};`;
+
+  if (key === "profile") {
+    if (!data.profile) return "";
+    contentHtml = `<p style="${textStyle}">${data.profile}</p>`;
+  } else if (key === "experience") {
+    if (!data.experience || !data.experience.length) return "";
+    contentHtml = data.experience.map(exp => `
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${exp.role || "Lead Designer"}</h4>
+          <span style="font-size: 0.8rem; font-weight: 600; color: ${config.colors?.accent || '#2563eb'};">${exp.startDate || "2024"} — ${exp.endDate || "Present"}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: ${config.colors?.secondary || '#6b7280'}; margin-bottom: 6px; font-weight: 500;">
+          <span>${exp.company || ""}</span>
+          <span>${exp.location || ""}</span>
+        </div>
+        <p style="font-size: 0.85rem; color: ${config.colors?.text || '#4b5563'}; line-height: 1.5;">${exp.description || ""}</p>
+      </div>
+    `).join('');
+  } else if (key === "projects") {
+    if (!data.projects || !data.projects.length) return "";
+    contentHtml = data.projects.map(proj => `
+      <div style="margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+          <h4 style="font-size: 0.92rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${proj.title || ""}</h4>
+          ${proj.url ? `<span style="font-size: 0.78rem; color: ${config.colors?.accent || '#2563eb'}; font-family: var(--font-mono);">${proj.url}</span>` : ""}
+        </div>
+        <p style="font-size: 0.85rem; color: ${config.colors?.text || '#4b5563'}; line-height: 1.5; margin-bottom: 4px;">${proj.description || ""}</p>
+        ${proj.techStack ? `<div style="font-size: 0.78rem; font-family: var(--font-mono); color: ${config.colors?.secondary || '#6b7280'};">Stack: ${proj.techStack}</div>` : ""}
+      </div>
+    `).join('');
+  } else if (key === "education") {
+    if (!data.education || !data.education.length) return "";
+    contentHtml = data.education.map(edu => `
+      <div style="margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+          <h4 style="font-size: 0.92rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${edu.degree || ""}</h4>
+          <span style="font-size: 0.8rem; font-weight: 600; color: ${config.colors?.accent || '#2563eb'};">${edu.startDate || "2020"} — ${edu.endDate || "2024"}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: ${config.colors?.secondary || '#6b7280'}; margin-bottom: 4px;">
+          <span>${edu.school || ""}</span>
+          <span>${edu.location || ""}</span>
+        </div>
+        ${edu.description ? `<p style="font-size: 0.80rem; color: ${config.colors?.text || '#4b5563'}; margin-top: 4px;">${edu.description}</p>` : ""}
+      </div>
+    `).join('');
+  } else if (key === "skills") {
+    if (!data.skills || !data.skills.length) return "";
+    contentHtml = `
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        ${data.skills.map(skill => `
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; background: rgba(0,0,0,0.03); color: ${config.colors?.text || '#333333'}; font-weight: 500; border-left: 3px solid ${config.colors?.accent || '#2563eb'}; padding: 4px 8px; border-radius: 4px;">
+            <span>${skill.name || ""}</span>
+            <span style="font-size: 0.72rem; color: ${config.colors?.accent || '#2563eb'}; font-weight: bold;">[${skill.level || "4"}]</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (key === "languages") {
+    if (!data.languages || !data.languages.length) return "";
+    contentHtml = `
+      <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+        ${data.languages.map(lang => `
+          <span style="font-size: 0.82rem; color: ${config.colors?.text || '#333333'}; background: rgba(0,0,0,0.02); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>${lang.name}</strong>: <span style="color: ${config.colors?.secondary || '#6b7280'}; font-size: 0.78rem;">${lang.proficiency}</span>
+          </span>
+        `).join('')}
+      </div>
+    `;
+  } else if (key === "certifications") {
+    if (!data.certifications || !data.certifications.length) return "";
+    contentHtml = data.certifications.map(cert => `
+      <div style="margin-bottom: 10px;">
+        <div style="font-size: 0.88rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${cert.title || ""}</div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: ${config.colors?.secondary || '#6b7280'};">
+          <span>${cert.issuer || ""}</span>
+          <span>${cert.date || ""}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  return `
+    <section style="margin-bottom: 18px;">
+      ${sectionHeaderHtml}
+      <div style="margin-top: 10px;">
+        ${contentHtml}
+      </div>
+    </section>
+  `;
+}
+
+export function renderDynamicResume(data, config) {
+  if (!config) {
+    config = getTemplatePreset("modern-minimal");
+  }
+
+  const fontFamily = config.typography?.fontFamily || "Inter";
+  const textColor = config.colors?.text || "#333333";
+  const bgColor = config.colors?.background || "#ffffff";
+
+  // Render Header block
+  const headerHtml = renderHeader(data, config);
+
+  // Compile individual section strings based on active custom layouts
+  const activeSections = {};
+  const sOrder = config.sectionOrder || ["profile", "experience", "projects", "education", "skills", "languages", "certifications"];
+  
+  sOrder.forEach(key => {
+    const secConf = config.sections?.[key] || {};
+    if (secConf.hidden) return;
+
+    let headerStyle = {};
+    if (config.globalHeadersStyle === "on" && config.sectionHeaders) {
+      headerStyle = { ...config.sectionHeaders };
+      headerStyle.title = secConf.title || key;
+      headerStyle.icon = secConf.icon || "";
+    } else {
+      headerStyle = {
+        title: secConf.title || key,
+        icon: secConf.icon || "",
+        fontFamily: secConf.fontFamily || config.typography?.fontFamily || "Inter",
+        fontSize: secConf.fontSize || 14,
+        color: secConf.color || config.colors?.primary || "#111827",
+        fontWeight: secConf.fontWeight || "700",
+        letterSpacing: 1,
+        borderStyle: secConf.dividerStyle || "solid-bottom",
+        backgroundStyle: "transparent",
+        alignment: secConf.alignment || "left"
+      };
+    }
+
+    const compiled = renderSection(key, data, headerStyle, config);
+    if (compiled) {
+      activeSections[key] = compiled;
+    }
+  });
+
+  // Compose overall grid depending on selected layout style
+  let bodyHtml = "";
+  const layout = config.layout || "single-column";
+
+  if (layout === "single-column") {
+    sOrder.forEach(key => {
+      if (activeSections[key]) {
+        bodyHtml += `<div style="margin-bottom: 24px;">${activeSections[key]}</div>`;
+      }
+    });
+  } else if (layout === "two-column" || layout === "left-sidebar" || layout === "right-sidebar") {
+    const sidebarKeys = ["profile", "skills", "languages", "certifications"];
+    let sidebarHtml = "";
+    let mainHtml = "";
+
+    sOrder.forEach(key => {
+      if (!activeSections[key]) return;
+      if (sidebarKeys.includes(key)) {
+        sidebarHtml += `<div style="margin-bottom: 24px;">${activeSections[key]}</div>`;
+      } else {
+        mainHtml += `<div style="margin-bottom: 24px;">${activeSections[key]}</div>`;
+      }
+    });
+
+    const isLeft = (layout === "left-sidebar" || layout === "two-column");
+    const gridStyle = isLeft 
+      ? `display: grid; grid-template-columns: 1.1fr 2fr; gap: 28px;` 
+      : `display: grid; grid-template-columns: 2fr 1.1fr; gap: 28px;`;
+
+    bodyHtml = `
+      <div style="${gridStyle}">
+        ${isLeft ? `<div>${sidebarHtml}</div><div>${mainHtml}</div>` : `<div>${mainHtml}</div><div>${sidebarHtml}</div>`}
+      </div>
+    `;
+  } else if (layout === "grid-layout") {
+    const profileHtml = activeSections["profile"] ? `<div style="margin-bottom: 24px;">${activeSections["profile"]}</div>` : "";
+    let leftCol = "";
+    let rightCol = "";
+    let toggle = true;
+
+    sOrder.forEach(key => {
+      if (key === "profile" || !activeSections[key]) return;
+      if (toggle) {
+        leftCol += `<div style="margin-bottom: 24px;">${activeSections[key]}</div>`;
+      } else {
+        rightCol += `<div style="margin-bottom: 24px;">${activeSections[key]}</div>`;
+      }
+      toggle = !toggle;
+    });
+
+    bodyHtml = `
+      ${profileHtml}
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>${leftCol}</div>
+        <div>${rightCol}</div>
+      </div>
+    `;
+  } else if (layout === "executive") {
+    sOrder.forEach(key => {
+      if (activeSections[key]) {
+        bodyHtml += `<div style="margin-bottom: 24px; border-bottom: 1px double #e5e7eb; padding-bottom: 12px;">${activeSections[key]}</div>`;
+      }
+    });
+  }
+
+  return `
+    <div style="font-family: '${fontFamily}', sans-serif; color: ${textColor}; background: ${bgColor}; width:100%;">
+      ${headerHtml}
+      <div style="margin-top: 24px;">
+        ${bodyHtml}
+      </div>
+    </div>
+  `;
+}
+
+// Map the old & new keys into unified preset outputs
+export const resumeTemplates = {
+  "ats-prof": (data, theme) => renderDynamicResume(data, getTemplatePreset("ats-prof")),
+  "modern-minimal": (data, theme) => renderDynamicResume(data, getTemplatePreset("modern-minimal")),
+  "exec-luxury": (data, theme) => renderDynamicResume(data, getTemplatePreset("exec-luxury")),
+  "corp-elite": (data, theme) => renderDynamicResume(data, getTemplatePreset("corp-elite")),
+  "creative-design": (data, theme) => renderDynamicResume(data, getTemplatePreset("creative-design")),
+  "dev-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("dev-resume")),
+  "pm-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("pm-resume")),
+  "marketing-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("marketing-resume")),
+  "student-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("student-resume")),
+  "freelancer-resume": (data, theme) => renderDynamicResume(data, getTemplatePreset("freelancer-resume")),
+
+  // Aliases for retro-compatibility
+  "modern": (data, theme) => renderDynamicResume(data, getTemplatePreset("modern-minimal")),
+  "executive": (data, theme) => renderDynamicResume(data, getTemplatePreset("exec-luxury")),
+  "ats": (data, theme) => renderDynamicResume(data, getTemplatePreset("ats-prof")),
+  "minimal": (data, theme) => renderDynamicResume(data, getTemplatePreset("modern-minimal")),
+  "creative": (data, theme) => renderDynamicResume(data, getTemplatePreset("creative-design")),
+  "corporate": (data, theme) => renderDynamicResume(data, getTemplatePreset("corp-elite"))
 };

@@ -3,9 +3,10 @@
    Manages the state, real-time input synchronization, undo/redo, lists, and local storage.
    ========================================================================= */
 
-import { resumeTemplates } from "./templates.js";
+import { resumeTemplates, renderDynamicResume, getTemplatePreset, iconSVGs } from "./templates.js";
 import { AIAssistant } from "./ai.js";
 import { themeController } from "./theme.js";
+import { exporter } from "./export.js";
 
 // Beautiful premium default prefilled resume information
 export const defaultResumeData = {
@@ -76,7 +77,8 @@ export const defaultResumeData = {
 class ResumeBuilder {
   constructor() {
     this.data = { ...defaultResumeData };
-    this.activeTemplate = "modern"; // modern, executive, ats, minimal, creative, corporate
+    this.activeTemplate = "modern-minimal"; // modern-minimal, exec-luxury, ats-prof, creative-design, corporate
+    this.designerConfig = null;
     
     // Undo/Redo historical stacks
     this.undoStack = [];
@@ -89,6 +91,7 @@ class ResumeBuilder {
     // Load from local storage if available
     const saved = localStorage.getItem("revbsus_resume_data");
     const savedTemplate = localStorage.getItem("revbsus_active_template");
+    const savedConfig = localStorage.getItem("revbsus_designer_config");
     
     if (saved) {
       try {
@@ -99,6 +102,18 @@ class ResumeBuilder {
     }
     if (savedTemplate) {
       this.activeTemplate = savedTemplate;
+    }
+
+    if (savedConfig) {
+      try {
+        this.designerConfig = JSON.parse(savedConfig);
+      } catch (e) {
+        console.error("Failed to parse designer config data", e);
+      }
+    }
+
+    if (!this.designerConfig) {
+      this.designerConfig = getTemplatePreset(this.activeTemplate || "modern-minimal");
     }
 
     // Load Version History Snapshots
@@ -113,9 +128,11 @@ class ResumeBuilder {
     }
 
     this.renderFormFields();
+    this.initDesignerControls();
     this.updatePreview();
     this.renderSnapshotsList();
     this.setupListeners();
+    this.setupDesignerListeners();
   }
 
   // Back state snapshot up for Undo
@@ -151,6 +168,9 @@ class ResumeBuilder {
   saveToStorage() {
     localStorage.setItem("revbsus_resume_data", JSON.stringify(this.data));
     localStorage.setItem("revbsus_active_template", this.activeTemplate);
+    if (this.designerConfig) {
+      localStorage.setItem("revbsus_designer_config", JSON.stringify(this.designerConfig));
+    }
     this.triggerAutosaveBadge();
   }
 
@@ -167,6 +187,8 @@ class ResumeBuilder {
   setTemplate(templateKey) {
     if (resumeTemplates[templateKey]) {
       this.activeTemplate = templateKey;
+      this.designerConfig = getTemplatePreset(templateKey);
+      this.initDesignerControls();
       this.updatePreview();
       this.saveToStorage();
       
@@ -180,25 +202,16 @@ class ResumeBuilder {
   updatePreview() {
     const sheet = document.getElementById("document-paper-sheet");
     if (sheet) {
-      // Fetch HTML compiled from templates module
-      const fontName = themeController?.config?.font || "inter";
-      sheet.innerHTML = resumeTemplates[this.activeTemplate](this.data, themeController);
+      if (!this.designerConfig) {
+        this.designerConfig = getTemplatePreset(this.activeTemplate || "modern-minimal");
+      }
       
-      // Apply Advanced Theme Customizer margin, font-size, line-height sliders, and paper background shades
+      sheet.innerHTML = renderDynamicResume(this.data, this.designerConfig);
+      
+      // Apply Advanced Theme Customizer margin
       if (themeController && themeController.config) {
         const config = themeController.config;
         sheet.style.padding = `${config.margins ?? 40}px`;
-        sheet.style.fontSize = `${config.fontSize ?? 14}px`;
-        sheet.style.lineHeight = `${config.lineSpacing ?? 1.5}`;
-        sheet.style.background = config.paperShadeCode ?? "#ffffff";
-        
-        if (config.paperShade === "cool-gray") {
-          sheet.style.color = "#111827";
-        } else if (config.paperShade === "warm-ivory") {
-          sheet.style.color = "#1c1917";
-        } else {
-          sheet.style.color = "#1d1d1f";
-        }
       }
       
       // Run AI Assist calculations Reactively to inputs
@@ -682,6 +695,744 @@ class ResumeBuilder {
         const saveBtn = document.getElementById("btn-save-snapshot");
         if (saveBtn) saveBtn.click();
       }
+    });
+  }
+
+  initDesignerControls() {
+    if (!this.designerConfig) {
+      this.designerConfig = getTemplatePreset(this.activeTemplate || "modern-minimal");
+    }
+
+    // --- Tab 2: Layout ---
+    const layout = this.designerConfig.layout || "single-column";
+    document.querySelectorAll(".layout-card").forEach(card => {
+      card.classList.toggle("active", card.getAttribute("data-layout") === layout);
+    });
+
+    const hAlign = this.designerConfig.alignments?.header || "left";
+    const sAlign = this.designerConfig.alignments?.sectionTitles || "left";
+    const bAlign = this.designerConfig.alignments?.bodyContent || "left";
+    const cAlign = this.designerConfig.alignments?.contactInfo || "left";
+    
+    const alignHSelect = document.getElementById("align-header");
+    if (alignHSelect) alignHSelect.value = hAlign;
+    const alignSSelect = document.getElementById("align-sections");
+    if (alignSSelect) alignSSelect.value = sAlign;
+    const alignBSelect = document.getElementById("align-body");
+    if (alignBSelect) alignBSelect.value = bAlign;
+    const alignCSelect = document.getElementById("align-contact");
+    if (alignCSelect) alignCSelect.value = cAlign;
+
+    // --- Tab 3: Typography System ---
+    const tConfig = this.designerConfig.typography || {};
+    const fontFam = tConfig.fontFamily || "Inter";
+    const fSize = tConfig.fontSize || 14;
+    const lHeight = tConfig.lineHeight || 1.5;
+    const lSpacing = tConfig.letterSpacing || 0;
+    const fWeight = tConfig.fontWeightBody || "400";
+
+    const typoFont = document.getElementById("typo-font");
+    if (typoFont) typoFont.value = fontFam;
+    
+    const typoSize = document.getElementById("typo-size");
+    if (typoSize) typoSize.value = fSize;
+    const typoSizeVal = document.getElementById("typo-size-val");
+    if (typoSizeVal) typoSizeVal.innerText = `${fSize}px`;
+
+    const typoHeight = document.getElementById("typo-height");
+    if (typoHeight) typoHeight.value = Math.round(lHeight * 10);
+    const typoHeightVal = document.getElementById("typo-height-val");
+    if (typoHeightVal) typoHeightVal.innerText = `${lHeight}`;
+
+    const typoSpacing = document.getElementById("typo-spacing");
+    if (typoSpacing) typoSpacing.value = lSpacing;
+    const typoSpacingVal = document.getElementById("typo-spacing-val");
+    if (typoSpacingVal) typoSpacingVal.innerText = `${lSpacing}px`;
+
+    const typoWeight = document.getElementById("typo-weight");
+    if (typoWeight) typoWeight.value = fWeight;
+
+    // --- Tab 4: Colors Palette ---
+    const cConfig = this.designerConfig.colors || {};
+    const colPrimary = cConfig.primary || "#111827";
+    const colSecondary = cConfig.secondary || "#4b5563";
+    const colAccent = cConfig.accent || "#8b5cf6";
+    const colText = cConfig.text || "#1f2937";
+    const colBg = cConfig.background || "#ffffff";
+
+    this.syncColorElement("primary", colPrimary);
+    this.syncColorElement("secondary", colSecondary);
+    this.syncColorElement("accent", colAccent);
+    this.syncColorElement("text", colText);
+    this.syncColorElement("bg", colBg);
+
+    // --- Tab 5: Section Layouts & Overrides ---
+    const globalHeaderSelect = document.getElementById("toggle-global-headers");
+    if (globalHeaderSelect) {
+      globalHeaderSelect.value = this.designerConfig.globalHeadersStyle || "on";
+    }
+    const wrapperGlobal = document.getElementById("wrapper-global-header-controls");
+    if (wrapperGlobal) {
+      wrapperGlobal.style.display = (this.designerConfig.globalHeadersStyle === "on") ? "flex" : "none";
+    }
+
+    const sHeaders = this.designerConfig.sectionHeaders || {};
+    const ghFont = document.getElementById("global-header-font");
+    if (ghFont) ghFont.value = sHeaders.fontFamily || "Poppins";
+    const ghSize = document.getElementById("global-header-size");
+    if (ghSize) ghSize.value = sHeaders.fontSize || 14;
+    const ghWeight = document.getElementById("global-header-weight");
+    if (ghWeight) ghWeight.value = sHeaders.fontWeight || "700";
+    const ghBorder = document.getElementById("global-header-border");
+    if (ghBorder) ghBorder.value = sHeaders.borderStyle || "solid-bottom";
+
+    this.renderSectionsAccordion();
+    this.renderSectionOrderControls();
+
+    // --- Tab 6: Header Settings ---
+    const hStyle = this.designerConfig.headerStyle || {};
+    const hFont = document.getElementById("h-font");
+    if (hFont) hFont.value = hStyle.fontFamily || "Open Sans";
+    const hSizeName = document.getElementById("h-size-name");
+    if (hSizeName) hSizeName.value = hStyle.fontSizeName || 32;
+    const hWeightName = document.getElementById("h-weight-name");
+    if (hWeightName) hWeightName.value = hStyle.fontWeightName || "800";
+    const hSizeTitle = document.getElementById("h-size-title");
+    if (hSizeTitle) hSizeTitle.value = hStyle.fontSizeTitle || 16;
+    const hWeightTitle = document.getElementById("h-weight-title");
+    if (hWeightTitle) hWeightTitle.value = hStyle.fontWeightTitle || "600";
+    const hBorder = document.getElementById("h-border");
+    if (hBorder) hBorder.value = hStyle.borderStyle || "none";
+    const hSpacing = document.getElementById("h-spacing");
+    if (hSpacing) hSpacing.value = hStyle.spacing || 12;
+
+    // --- Tab 7: Preset Quick Highlight ---
+    document.querySelectorAll(".preset-card").forEach(pCard => {
+      const prKey = pCard.getAttribute("data-preset");
+      pCard.classList.toggle("active", prKey === this.activeTemplate);
+    });
+  }
+
+  syncColorElement(key, hex) {
+    const picker = document.getElementById(`picker-${key}`);
+    const hexInput = document.getElementById(`hex-${key}`);
+    if (picker) picker.value = hex;
+    if (hexInput) hexInput.value = hex;
+  }
+
+  renderSectionsAccordion() {
+    const container = document.getElementById("individual-sections-override-list");
+    if (!container) return;
+
+    container.innerHTML = "";
+    const sections = this.designerConfig.sections || {};
+
+    Object.keys(sections).forEach(key => {
+      const sec = sections[key];
+      const isLocked = sec.locked ? true : false;
+      const isHidden = sec.hidden ? true : false;
+
+      const row = document.createElement("div");
+      row.className = "luxury-subcard";
+      row.style.cssText = `
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: rgba(255,255,255,0.015);
+        margin-bottom: 8px;
+        overflow: hidden;
+        transition: opacity 0.2s;
+        opacity: ${isHidden ? 0.5 : 1};
+      `;
+
+      row.innerHTML = `
+        <div class="accordion-section-header" style="padding:10px 14px; background:rgba(255,255,255,0.02); display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="lucide-chevron-right sec-chevron" style="font-size:0.8rem; color:var(--accent); width:14px; height:14px; transition:transform 0.2s;"></i>
+            <span style="font-size:0.85rem; font-weight:700; color:#ffffff;">${sec.title || key}</span>
+            <span style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono); text-transform:uppercase;">[${key}]</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;" onclick="event.stopPropagation();">
+            <button class="btn-hide-sec" data-key="${key}" style="border:none; background:transparent; color:${isHidden ? 'var(--accent)' : 'var(--text-muted)'}; cursor:pointer;" title="Hide/Show section">
+              <i class="${isHidden ? 'lucide-eye-off' : 'lucide-eye'}" style="width:16px; height:16px;"></i>
+            </button>
+            <button class="btn-lock-sec" data-key="${key}" style="border:none; background:transparent; color:${isLocked ? '#ef4444' : 'var(--text-muted)'}; cursor:pointer;" title="Lock/Unlock section modifications">
+              <i class="${isLocked ? 'lucide-lock' : 'lucide-unlock'}" style="width:16px; height:16px;"></i>
+            </button>
+            <button class="btn-duplicate-sec" data-key="${key}" style="border:none; background:transparent; color:var(--text-muted); cursor:pointer;" title="Duplicate Section">
+              <i class="lucide-copy" style="width:14px; height:14px;"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="accordion-section-body" style="display:none; padding:12px; border-top:1px solid var(--border-color); background:rgba(0,0,0,0.15); flex-direction:column; gap:10px;">
+          <div>
+            <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Rename Title Display</label>
+            <input type="text" class="input-premium rename-sec-input" data-key="${key}" value="${sec.title || ""}" ${isLocked ? "disabled" : ""}>
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Font Family</label>
+              <select class="input-premium font-sec-select" data-key="${key}" ${isLocked ? "disabled" : ""}>
+                <option value="Inter" ${sec.fontFamily === 'Inter' ? 'selected':''}>Inter</option>
+                <option value="Poppins" ${sec.fontFamily === 'Poppins' ? 'selected':''}>Poppins</option>
+                <option value="Montserrat" ${sec.fontFamily === 'Montserrat' ? 'selected':''}>Montserrat</option>
+                <option value="DM Sans" ${sec.fontFamily === 'DM Sans' ? 'selected':''}>DM Sans</option>
+                <option value="Playfair Display" ${sec.fontFamily === 'Playfair Display' ? 'selected':''}>Playfair Display</option>
+                <option value="Roboto" ${sec.fontFamily === 'Roboto' ? 'selected':''}>Roboto</option>
+                <option value="Open Sans" ${sec.fontFamily === 'Open Sans' ? 'selected':''}>Open Sans</option>
+                <option value="Lora" ${sec.fontFamily === 'Lora' ? 'selected':''}>Lora</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Font Color</label>
+              <input type="color" class="color-sec-picker" data-key="${key}" value="${sec.color || '#111827'}" ${isLocked ? "disabled" : ""} style="width:100%; height:32px; border-radius:4px; padding:0; border:none; background:none; cursor:pointer;">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Size (px)</label>
+              <input type="number" class="input-premium size-sec-input" data-key="${key}" value="${sec.fontSize || 14}" min="10" max="32" ${isLocked ? "disabled" : ""}>
+            </div>
+            <div>
+              <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Weight</label>
+              <select class="input-premium weight-sec-select" data-key="${key}" ${isLocked ? "disabled" : ""}>
+                <option value="500" ${sec.fontWeight === '500'?'selected':''}>Medium</option>
+                <option value="600" ${sec.fontWeight === '600'?'selected':''}>Semi-Bold</option>
+                <option value="700" ${sec.fontWeight === '700'?'selected':''}>Bold</option>
+                <option value="800" ${sec.fontWeight === '800'?'selected':''}>Extra Bold</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Title Alignment</label>
+              <select class="input-premium align-sec-select" data-key="${key}" ${isLocked ? "disabled" : ""}>
+                <option value="left" ${sec.alignment === 'left' ? 'selected':''}>Left</option>
+                <option value="center" ${sec.alignment === 'center' ? 'selected':''}>Center</option>
+                <option value="right" ${sec.alignment === 'right' ? 'selected':''}>Right</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Divider Style</label>
+              <select class="input-premium border-sec-select" data-key="${key}" ${isLocked ? "disabled" : ""}>
+                <option value="none" ${sec.dividerStyle === 'none' ? 'selected':''}>None</option>
+                <option value="solid-bottom" ${sec.dividerStyle === 'solid-bottom' ? 'selected':''}>Solid Line Below</option>
+                <option value="double-bottom" ${sec.dividerStyle === 'double-bottom' ? 'selected':''}>Double Line Below</option>
+                <option value="solid-top" ${sec.dividerStyle === 'solid-top' ? 'selected':''}>Solid Line Above</option>
+                <option value="bullet" ${sec.dividerStyle === 'bullet' ? 'selected':''}>Left Accent Bullet</option>
+                <option value="box" ${sec.dividerStyle === 'box' ? 'selected':''}>Filled Capsule</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Icon Beside Title</label>
+            <select class="input-premium icon-sec-select" data-key="${key}" ${isLocked ? "disabled" : ""}>
+              <option value="" ${!sec.icon ? 'selected':''}>None</option>
+              <option value="lucide-user" ${sec.icon === 'lucide-user'?'selected':''}>User Outline</option>
+              <option value="lucide-briefcase" ${sec.icon === 'lucide-briefcase'?'selected':''}>Briefcase</option>
+              <option value="lucide-graduation-cap" ${sec.icon === 'lucide-graduation-cap'?'selected':''}>Graduation Cap</option>
+              <option value="lucide-wrench" ${sec.icon === 'lucide-wrench'?'selected':''}>Wrench Tools</option>
+              <option value="lucide-languages" ${sec.icon === 'lucide-languages'?'selected':''}>Language Globe</option>
+              <option value="lucide-award" ${sec.icon === 'lucide-award'?'selected':''}>Gold Award Shield</option>
+              <option value="lucide-star" ${sec.icon === 'lucide-star'?'selected':''}>Interactive Star</option>
+            </select>
+          </div>
+        </div>
+      `;
+
+      row.querySelector(".accordion-section-header").addEventListener("click", () => {
+        const body = row.querySelector(".accordion-section-body");
+        const chev = row.querySelector(".sec-chevron");
+        const isOpen = body.style.display === "flex";
+        body.style.display = isOpen ? "none" : "flex";
+        chev.style.transform = isOpen ? "rotate(0deg)" : "rotate(90deg)";
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  renderSectionOrderControls() {
+    const container = document.getElementById("section-reorder-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+    const order = this.designerConfig.sectionOrder || [];
+    const sections = this.designerConfig.sections || {};
+
+    order.forEach((key, idx) => {
+      const label = sections[key]?.title || key;
+
+      const item = document.createElement("div");
+      item.className = "section-order-item";
+      item.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-family:var(--font-sans); font-size:0.85rem; font-weight:700; color:#ffffff;">${label}</span>
+          <span style="font-size:0.65rem; color:var(--text-muted); font-family:var(--font-mono);">[${key}]</span>
+        </div>
+        <div style="display:flex; gap:4px;">
+          <button class="section-order-btn order-up" data-idx="${idx}" title="Move Up"><i class="lucide-arrow-up" style="width:14px; height:14px;"></i></button>
+          <button class="section-order-btn order-down" data-idx="${idx}" title="Move Down"><i class="lucide-arrow-down" style="width:14px; height:14px;"></i></button>
+        </div>
+      `;
+
+      container.appendChild(item);
+    });
+  }
+
+  setupDesignerListeners() {
+    // --- Tabs Toggling ---
+    document.querySelectorAll(".designer-tab-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const tabKey = btn.getAttribute("data-tab");
+        document.querySelectorAll(".designer-tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        document.querySelectorAll(".designer-tab-content").forEach(pane => {
+          pane.classList.remove("active");
+        });
+        const targetPane = document.getElementById(`designer-panel-${tabKey}`);
+        if (targetPane) {
+          targetPane.classList.add("active");
+        }
+      });
+    });
+
+    // --- Layout switcher card click ---
+    document.querySelectorAll(".layout-card").forEach(card => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".layout-card").forEach(c => c.classList.remove("active"));
+        card.classList.add("active");
+        const layoutKey = card.getAttribute("data-layout");
+        this.pushHistory();
+        this.designerConfig.layout = layoutKey;
+        this.updatePreview();
+        this.saveToStorage();
+      });
+    });
+
+    // --- Dropdowns ---
+    document.getElementById("align-header")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.alignments) this.designerConfig.alignments = {};
+      this.designerConfig.alignments.header = e.target.value;
+      if (this.designerConfig.headerStyle) {
+        this.designerConfig.headerStyle.alignment = e.target.value;
+      }
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("align-sections")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.alignments) this.designerConfig.alignments = {};
+      this.designerConfig.alignments.sectionTitles = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("align-body")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.alignments) this.designerConfig.alignments = {};
+      this.designerConfig.alignments.bodyContent = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("align-contact")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.alignments) this.designerConfig.alignments = {};
+      this.designerConfig.alignments.contactInfo = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    // --- Tab 3: Typography System Binds ---
+    document.getElementById("typo-font")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      this.designerConfig.typography.fontFamily = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("typo-size")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      const val = parseInt(e.target.value);
+      this.designerConfig.typography.fontSize = val;
+      const label = document.getElementById("typo-size-val");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("typo-height")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      const val = parseFloat((parseInt(e.target.value) / 10).toFixed(1));
+      this.designerConfig.typography.lineHeight = val;
+      const label = document.getElementById("typo-height-val");
+      if (label) label.innerText = `${val}`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("typo-spacing")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      const val = parseInt(e.target.value);
+      this.designerConfig.typography.letterSpacing = val;
+      const label = document.getElementById("typo-spacing-val");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("typo-weight")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      this.designerConfig.typography.fontWeightBody = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    // --- Tab 4: Colors Palette Designer Binds ---
+    const bindColorControl = (key) => {
+      const picker = document.getElementById(`picker-${key}`);
+      const hexInput = document.getElementById(`hex-${key}`);
+      
+      const updateColor = (hexVal) => {
+        this.pushHistory();
+        this.designerConfig.colors[key] = hexVal;
+        this.updatePreview();
+        this.saveToStorage();
+      };
+
+      picker?.addEventListener("input", (e) => {
+        const h = e.target.value;
+        if (hexInput) hexInput.value = h;
+        updateColor(h);
+      });
+      hexInput?.addEventListener("input", (e) => {
+        let h = e.target.value.trim();
+        if (h.startsWith("#") && h.length === 7) {
+          if (picker) picker.value = h;
+          updateColor(h);
+        }
+      });
+    };
+    bindColorControl("primary");
+    bindColorControl("secondary");
+    bindColorControl("accent");
+    bindColorControl("text");
+    bindColorControl("bg");
+
+    // Click handler for solid palette presets
+    document.addEventListener("click", (e) => {
+      const cBtn = e.target.closest(".color-preset-btn");
+      if (cBtn) {
+        this.pushHistory();
+        const p = cBtn.getAttribute("data-primary");
+        const s = cBtn.getAttribute("data-secondary");
+        const a = cBtn.getAttribute("data-accent");
+        const t = cBtn.getAttribute("data-text");
+        const b = cBtn.getAttribute("data-bg");
+
+        this.designerConfig.colors.primary = p;
+        this.designerConfig.colors.secondary = s;
+        this.designerConfig.colors.accent = a;
+        this.designerConfig.colors.text = t;
+        this.designerConfig.colors.background = b;
+
+        this.initDesignerControls();
+        this.updatePreview();
+        this.saveToStorage();
+      }
+    });
+
+    // --- Tab 5: Sections ---
+    document.getElementById("toggle-global-headers")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      const val = e.target.value;
+      this.designerConfig.globalHeadersStyle = val;
+      const wrap = document.getElementById("wrapper-global-header-controls");
+      if (wrap) wrap.style.display = (val === "on") ? "flex" : "none";
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("global-header-font")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.sectionHeaders) this.designerConfig.sectionHeaders = {};
+      this.designerConfig.sectionHeaders.fontFamily = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("global-header-size")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.sectionHeaders) this.designerConfig.sectionHeaders = {};
+      this.designerConfig.sectionHeaders.fontSize = parseInt(e.target.value);
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("global-header-weight")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.sectionHeaders) this.designerConfig.sectionHeaders = {};
+      this.designerConfig.sectionHeaders.fontWeight = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("global-header-border")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.sectionHeaders) this.designerConfig.sectionHeaders = {};
+      this.designerConfig.sectionHeaders.borderStyle = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    // Intercept section detail overrides inputs
+    document.addEventListener("input", (e) => {
+      if (e.target.classList.contains("rename-sec-input")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].title = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+        this.renderSectionOrderControls();
+      }
+      if (e.target.classList.contains("size-sec-input")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].fontSize = parseInt(e.target.value);
+        this.updatePreview();
+        this.saveToStorage();
+      }
+    });
+
+    document.addEventListener("change", (e) => {
+      if (e.target.classList.contains("font-sec-select")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].fontFamily = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+      }
+      if (e.target.classList.contains("weight-sec-select")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].fontWeight = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+      }
+      if (e.target.classList.contains("align-sec-select")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].alignment = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+      }
+      if (e.target.classList.contains("border-sec-select")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].dividerStyle = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+      }
+      if (e.target.classList.contains("icon-sec-select")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].icon = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+      }
+    });
+
+    document.addEventListener("input", (e) => {
+      if (e.target.classList.contains("color-sec-picker")) {
+        const key = e.target.getAttribute("data-key");
+        this.pushHistory();
+        if (!this.designerConfig.sections[key]) this.designerConfig.sections[key] = {};
+        this.designerConfig.sections[key].color = e.target.value;
+        this.updatePreview();
+        this.saveToStorage();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      const hideBtn = e.target.closest(".btn-hide-sec");
+      if (hideBtn) {
+        const key = hideBtn.getAttribute("data-key");
+        this.pushHistory();
+        const sc = this.designerConfig.sections[key];
+        sc.hidden = !sc.hidden;
+        this.renderSectionsAccordion();
+        this.updatePreview();
+        this.saveToStorage();
+      }
+
+      const lockBtn = e.target.closest(".btn-lock-sec");
+      if (lockBtn) {
+        const key = lockBtn.getAttribute("data-key");
+        this.pushHistory();
+        const sc = this.designerConfig.sections[key];
+        sc.locked = !sc.locked;
+        this.renderSectionsAccordion();
+        this.updatePreview();
+        this.saveToStorage();
+      }
+
+      const dupBtn = e.target.closest(".btn-duplicate-sec");
+      if (dupBtn) {
+        const key = dupBtn.getAttribute("data-key");
+        this.pushHistory();
+        const uuidKey = `${key}_copy_${Math.floor(Math.random() * 1000)}`;
+        
+        const scOriginal = this.designerConfig.sections[key];
+        this.designerConfig.sections[uuidKey] = {
+          ...scOriginal,
+          title: `${scOriginal.title || key} (Copy)`,
+          locked: false
+        };
+
+        if (this.data[key]) {
+          this.data[uuidKey] = JSON.parse(JSON.stringify(this.data[key]));
+        } else if (key === "profile") {
+          this.data[uuidKey] = this.data.profile;
+        }
+
+        const originalIndex = this.designerConfig.sectionOrder.indexOf(key);
+        if (originalIndex !== -1) {
+          this.designerConfig.sectionOrder.splice(originalIndex + 1, 0, uuidKey);
+        } else {
+          this.designerConfig.sectionOrder.push(uuidKey);
+        }
+
+        this.renderSectionsAccordion();
+        this.renderSectionOrderControls();
+        this.updatePreview();
+        this.saveToStorage();
+      }
+    });
+
+    // Up/down reordering inside Tab 5
+    document.addEventListener("click", (e) => {
+      const upBtn = e.target.closest(".section-order-btn.order-up");
+      if (upBtn) {
+        const idx = parseInt(upBtn.getAttribute("data-idx"));
+        if (idx > 0) {
+          this.pushHistory();
+          const list = this.designerConfig.sectionOrder;
+          const temp = list[idx];
+          list[idx] = list[idx - 1];
+          list[idx - 1] = temp;
+          this.renderSectionOrderControls();
+          this.updatePreview();
+          this.saveToStorage();
+        }
+      }
+
+      const downBtn = e.target.closest(".section-order-btn.order-down");
+      if (downBtn) {
+        const idx = parseInt(downBtn.getAttribute("data-idx"));
+        const list = this.designerConfig.sectionOrder;
+        if (idx < list.length - 1) {
+          this.pushHistory();
+          const temp = list[idx];
+          list[idx] = list[idx + 1];
+          list[idx + 1] = temp;
+          this.renderSectionOrderControls();
+          this.updatePreview();
+          this.saveToStorage();
+        }
+      }
+    });
+
+    // --- Tab 6: Header Settings ---
+    document.getElementById("h-font")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.fontFamily = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("h-size-name")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.fontSizeName = parseInt(e.target.value);
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("h-weight-name")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.fontWeightName = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("h-size-title")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.fontSizeTitle = parseInt(e.target.value);
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("h-weight-title")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.fontWeightTitle = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("h-border")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.borderStyle = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+    document.getElementById("h-spacing")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.spacing = parseInt(e.target.value);
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    // --- Tab 7: Preset Quick apply click ---
+    document.querySelectorAll(".preset-card").forEach(pCard => {
+      pCard.addEventListener("click", () => {
+        const prKey = pCard.getAttribute("data-preset");
+        this.pushHistory();
+        
+        this.activeTemplate = prKey;
+        this.designerConfig = getTemplatePreset(prKey);
+        
+        this.initDesignerControls();
+        this.updatePreview();
+        this.saveToStorage();
+
+        document.querySelectorAll(".preset-card").forEach(c => c.classList.remove("active"));
+        pCard.classList.add("active");
+      });
+    });
+
+    // --- Tab 8: Custom Preserved Export Handlers ---
+    document.getElementById("btn-export-pdf-custom")?.addEventListener("click", () => {
+      exporter.exportPDF(`${this.data.personal?.name || "Resume"}_CV`);
+    });
+    document.getElementById("btn-export-docx-custom")?.addEventListener("click", () => {
+      const sheet = document.getElementById("document-paper-sheet");
+      exporter.exportDOCX(this.data, sheet.innerHTML, `${this.data.personal?.name || "Resume"}_CV.doc`);
+    });
+    document.getElementById("btn-export-html-custom")?.addEventListener("click", () => {
+      const sheet = document.getElementById("document-paper-sheet");
+      exporter.exportHTML(this.data, sheet.innerHTML, this.activeTemplate, `${this.data.personal?.name || "Resume"}_CV.html`);
+    });
+    document.getElementById("btn-export-txt-custom")?.addEventListener("click", () => {
+      exporter.exportTXT(this.data, `${this.data.personal?.name || "Resume"}_CV.txt`);
+    });
+    document.getElementById("btn-export-json-custom")?.addEventListener("click", () => {
+      exporter.exportJSON(this.data, `${this.data.personal?.name || "Resume"}_CV.json`);
     });
   }
 }
