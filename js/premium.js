@@ -891,61 +891,230 @@ class PremiumUXEngine {
   // ==========================================================================
   // 15. LIVE RESUME HEALTH INTEGRATED MONITOR
   // ==========================================================================
+  // ==========================================================================
+  // 15. LIVE RESUME HEALTH INTEGRATED MONITOR
+  // ==========================================================================
   renderHealthWidget() {
     const viewPort = document.querySelector(".builder-split-screen");
     if (!viewPort) return;
 
-    const healthBadge = document.createElement("div");
-    healthBadge.id = "resume-health-monitor-floating-panel";
-    healthBadge.className = "health-monitor-capsule";
-    healthBadge.innerHTML = `
-      <div class="health-head">
-        <span class="health-dot"></span>
-        <h6>ATS Radar Score</h6>
+    const intelCenter = document.createElement("div");
+    intelCenter.id = "resume-intelligence-center";
+    intelCenter.className = "premium-intelligence-drawer";
+    intelCenter.innerHTML = `
+      <div class="intel-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <i class="lucide-activity intel-pulse" style="width:14px; height:14px; color:var(--accent);"></i>
+          <h5 style="margin:0; font-family:'Inter Tight', sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-main);">Resume Intelligence</h5>
+        </div>
+        <span class="intel-live-badge">Live Sync</span>
       </div>
-      <div class="health-radial-wrap" style="display:flex; align-items:center; gap:16px; margin: 10px 0;">
-        <svg class="score-ring" viewBox="0 0 36 36" style="width:40px; height:40px;">
-          <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
-          <circle class="ring-fill" id="health-svg-ring" cx="18" cy="18" r="16" stroke-dasharray="75 100"></circle>
-        </svg>
-        <div>
-          <div class="health-score" id="health-live-percent" style="font-size:0.95rem; font-weight:800; color:var(--text-main);">75% Match</div>
-          <div style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Optimized Form</div>
+      
+      <!-- Mini overview (Primary score) -->
+      <div class="intel-compact-overview">
+        <div class="intel-radar-plate">
+          <svg class="score-ring-lg" viewBox="0 0 36 36">
+            <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+            <circle class="ring-fill" id="intel-ats-svg-ring" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+          </svg>
+          <div class="intel-percentage text-main" id="intel-ats-score-main">0%</div>
+        </div>
+        <div style="flex:1;">
+          <div class="intel-status-title" id="intel-status-title-text" style="color:var(--text-main);">Evaluating...</div>
+          <div class="intel-status-desc" id="intel-status-desc-text">Syncing text and content...</div>
         </div>
       </div>
-      <div class="health-expand-details" id="health-toggle-expand" style="cursor:pointer; font-size:0.65rem; color:var(--accent); text-align:center; padding: 6px 0; border-top:1px solid rgba(255,255,255,0.04); margin-top:4px;">👁️ ATS Recommendations</div>
-      <div id="health-hidden-bullets" style="display:none; flex-direction:column; gap:6px; margin-top:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:6px;">
-        <p style="font-size:0.68rem; color:var(--text-muted); display:flex; align-items:start; gap:6px;"><span style="color:var(--accent);">✓</span> Complete email & linkedin</p>
-        <p style="font-size:0.68rem; color:var(--text-muted); display:flex; align-items:start; gap:6px;"><span style="color:var(--accent);">✓</span> Leverage metric impact verbs</p>
-        <p style="font-size:0.68rem; color:var(--text-muted); display:flex; align-items:start; gap:6px;"><span style="color:var(--accent);">✓</span> Target STAR phrase model</p>
+      
+      <div class="intel-expand-indicator" id="intel-expand-toggle">
+        <span id="intel-toggle-text">View Detailed Analytics</span>
+        <i class="lucide-chevron-down" id="intel-toggle-icon" style="width:12px; height:12px; transition: transform 0.3s;"></i>
+      </div>
+      
+      <!-- Metrics Expanded Grid -->
+      <div class="intel-expanded-details" id="intel-details-expanded" style="display:none;">
+        <div class="intel-metrics-grid">
+          <!-- 1. Readability -->
+          <div class="intel-metric-card">
+            <div class="intel-metric-top">
+              <svg class="score-ring-sm" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="ring-fill readability-fill" id="intel-ring-readability" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+              </svg>
+              <div class="intel-metric-score" id="intel-score-readability">0%</div>
+            </div>
+            <div class="intel-metric-label">Readability</div>
+          </div>
+          
+          <!-- 2. Keyword Match -->
+          <div class="intel-metric-card">
+            <div class="intel-metric-top">
+              <svg class="score-ring-sm" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="ring-fill keyword-fill" id="intel-ring-keyword" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+              </svg>
+              <div class="intel-metric-score" id="intel-score-keyword">0%</div>
+            </div>
+            <div class="intel-metric-label">Keywords</div>
+          </div>
+
+          <!-- 3. Impact Score -->
+          <div class="intel-metric-card">
+            <div class="intel-metric-top">
+              <svg class="score-ring-sm" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="ring-fill impact-fill" id="intel-ring-impact" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+              </svg>
+              <div class="intel-metric-score" id="intel-score-impact">0%</div>
+            </div>
+            <div class="intel-metric-label">Impact</div>
+          </div>
+
+          <!-- 4. Formatting Score -->
+          <div class="intel-metric-card">
+            <div class="intel-metric-top">
+              <svg class="score-ring-sm" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="ring-fill design-fill" id="intel-ring-formatting" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+              </svg>
+              <div class="intel-metric-score" id="intel-score-formatting">0%</div>
+            </div>
+            <div class="intel-metric-label">Formatting</div>
+          </div>
+
+          <!-- 5. Experience Strength -->
+          <div class="intel-metric-card">
+            <div class="intel-metric-top">
+              <svg class="score-ring-sm" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="ring-fill experience-fill" id="intel-ring-experience" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+              </svg>
+              <div class="intel-metric-score" id="intel-score-experience">0%</div>
+            </div>
+            <div class="intel-metric-label">Experience</div>
+          </div>
+
+          <!-- 6. Overall ATS Score -->
+          <div class="intel-metric-card">
+            <div class="intel-metric-top">
+              <svg class="score-ring-sm" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="ring-fill readability-fill" id="intel-ring-overall" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+              </svg>
+              <div class="intel-metric-score" id="intel-score-overall">0%</div>
+            </div>
+            <div class="intel-metric-label">ATS Score</div>
+          </div>
+        </div>
+        
+        <!-- Action Checklists / Suggestions -->
+        <div class="intel-suggestions-box">
+          <div class="suggestions-title" style="display:flex; align-items:center; gap:4px; font-weight:700;"><i class="lucide-sparkles" style="width:10px; height:10px; color:var(--accent);"></i> AI Optimization</div>
+          <div id="intel-suggestions-list" class="suggestions-list">
+            <!-- populated live -->
+          </div>
+        </div>
       </div>
     `;
 
-    viewPort.appendChild(healthBadge);
+    viewPort.appendChild(intelCenter);
 
-    // Expand toggle listener
-    document.getElementById("health-toggle-expand").addEventListener("click", () => {
-      const block = document.getElementById("health-hidden-bullets");
-      if (block.style.display === "none") {
-        block.style.display = "flex";
+    // Expand toggle action
+    const toggler = document.getElementById("intel-expand-toggle");
+    const container = document.getElementById("resume-intelligence-center");
+    const expandedDetails = document.getElementById("intel-details-expanded");
+    const toggleText = document.getElementById("intel-toggle-text");
+    const toggleIcon = document.getElementById("intel-toggle-icon");
+
+    toggler.addEventListener("click", () => {
+      container.classList.toggle("expanded");
+      if (expandedDetails.style.display === "none") {
+        expandedDetails.style.display = "block";
+        toggleText.innerText = "Hide Detailed Analytics";
+        toggleIcon.style.transform = "rotate(180deg)";
       } else {
-        block.style.display = "none";
+        expandedDetails.style.display = "none";
+        toggleText.innerText = "View Detailed Analytics";
+        toggleIcon.style.transform = "rotate(0deg)";
       }
     });
 
-    // Update live health when preview compiles
-    document.addEventListener("input", () => {
-      setTimeout(() => {
-        if (!window.workspaceBuilder) return;
-        const stats = AIAssistant.analyzeResume(window.workspaceBuilder.data);
-        const ring = document.getElementById("health-svg-ring");
-        const lbl = document.getElementById("health-live-percent");
-        if (ring && lbl) {
-          const score = stats.scores.health;
-          ring.setAttribute("stroke-dasharray", `${score} 100`);
-          lbl.innerText = `${score}% Match`;
+    const updateMetricsDisplay = () => {
+      if (!window.workspaceBuilder) return;
+      
+      const stats = AIAssistant.analyzeResume(window.workspaceBuilder.data);
+      const atsScore = stats.scores.ats || 70;
+      const readability = stats.scores.readability || 65;
+      const keyword = stats.scores.keyword || 60;
+      const formatting = stats.scores.design || 85;
+      
+      // Secondary scores formula mappings
+      const impact = Math.min(99, Math.round(keyword * 0.9 + 10));
+      const experience = Math.max(30, Math.min(99, (window.workspaceBuilder.data.experience?.length || 0) * 30 + 10));
+      const overall = stats.scores.health || 75;
+
+      // Update Top Compact Match Circle
+      const mainRing = document.getElementById("intel-ats-svg-ring");
+      const mainlbl = document.getElementById("intel-ats-score-main");
+      if (mainRing && mainlbl) {
+        mainRing.setAttribute("stroke-dasharray", `${overall} 100`);
+        mainlbl.innerText = `${overall}%`;
+      }
+
+      // Update descriptive title and status
+      const descTitle = document.getElementById("intel-status-title-text");
+      const descSub = document.getElementById("intel-status-desc-text");
+      if (descTitle && descSub) {
+        if (overall >= 85) {
+          descTitle.innerText = "ATS Fully Optimized";
+          descSub.innerText = "Elite layout. Strong keywords.";
+        } else if (overall >= 60) {
+          descTitle.innerText = "ATS High Potential";
+          descSub.innerText = "Good foundation. Apply tips below.";
+        } else {
+          descTitle.innerText = "Awaiting Enhancements";
+          descSub.innerText = "Thin word density. Action required.";
         }
-      }, 350);
+      }
+
+      // Update 6 grid progress circles & scores
+      const mapRings = [
+        { rid: "intel-ring-readability", scoreId: "intel-score-readability", val: readability },
+        { rid: "intel-ring-keyword", scoreId: "intel-score-keyword", val: keyword },
+        { rid: "intel-ring-impact", scoreId: "intel-score-impact", val: impact },
+        { rid: "intel-ring-formatting", scoreId: "intel-score-formatting", val: formatting },
+        { rid: "intel-ring-experience", scoreId: "intel-score-experience", val: experience },
+        { rid: "intel-ring-overall", scoreId: "intel-score-overall", val: atsScore }
+      ];
+
+      mapRings.forEach(item => {
+        const rEl = document.getElementById(item.rid);
+        const lEl = document.getElementById(item.scoreId);
+        if (rEl) rEl.setAttribute("stroke-dasharray", `${item.val} 100`);
+        if (lEl) lEl.innerText = `${item.val}%`;
+      });
+
+      // Update Suggestion list with live checklists
+      const sList = document.getElementById("intel-suggestions-list");
+      if (sList && stats.recommendations) {
+        sList.innerHTML = stats.recommendations.map(rec => `
+          <p style="margin:0 0 6px 0; display:flex; align-items:start; gap:6px;">
+            <span style="color:var(--accent); font-weight:bold;">✦</span>
+            <span>${rec}</span>
+          </p>
+        `).join("");
+      }
+
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    };
+
+    // Run first compile
+    setTimeout(updateMetricsDisplay, 400);
+
+    // Bind real-time change listener
+    document.addEventListener("input", () => {
+      setTimeout(updateMetricsDisplay, 300);
     });
   }
 
@@ -980,29 +1149,48 @@ class PremiumUXEngine {
             return;
           }
 
-          // Create the dropdown menu floating container
+          // Create the dropdown menu floating container with all 8 deluxe actions
           const menu = document.createElement("div");
           menu.className = "ai-dropdown-choice-menu";
           menu.innerHTML = `
-            <div class="ai-menu-option" data-mode="star">
+            <div class="ai-menu-option" data-mode="improve">
               <i class="lucide-sparkles"></i>
-              <span>🎯 STAR Format Wording</span>
+              <span>✨ Improve Writing</span>
             </div>
-            <div class="ai-menu-option" data-mode="verbs">
-              <i class="lucide-zap"></i>
-              <span>⚡ Enhance Action Verbs</span>
+            <div class="ai-menu-option" data-mode="professional">
+              <i class="lucide-briefcase"></i>
+              <span>👔 Professional Rewrite</span>
+            </div>
+            <div class="ai-menu-option" data-mode="ats">
+              <i class="lucide-scan"></i>
+              <span>🎯 ATS Optimize</span>
+            </div>
+            <div class="ai-menu-option" data-mode="star">
+              <i class="lucide-target"></i>
+              <span>💫 STAR Format</span>
             </div>
             <div class="ai-menu-option" data-mode="metrics">
               <i class="lucide-trending-up"></i>
-              <span>📈 Quantify Impact (Add Metrics)</span>
+              <span>📈 Quantify Impact</span>
             </div>
-            <div class="ai-menu-option" data-mode="flow">
-              <i class="lucide-align-left"></i>
-              <span>✍️ Perfect Grammar & Flow</span>
+            <div class="ai-menu-option" data-mode="expand">
+              <i class="lucide-chevron-right"></i>
+              <span>↔️ Expand Content</span>
+            </div>
+            <div class="ai-menu-option" data-mode="shorten">
+              <i class="lucide-chevron-left"></i>
+              <span>🤏 Shorten Content</span>
+            </div>
+            <div class="ai-menu-option" data-mode="grammar">
+              <i class="lucide-check-circle"></i>
+              <span>✅ Grammar Fix</span>
             </div>
           `;
 
           document.body.appendChild(menu);
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
 
           // Precision absolute position relative to screen coords
           const rect = sparkle.getBoundingClientRect();
@@ -1018,10 +1206,14 @@ class PremiumUXEngine {
               menu.remove();
 
               let modifier = "";
-              if (mode === "star") modifier = " (Style instruction: Apply state-of-the-art STAR - Situation Task Action Result formatting with active impact metrics)";
-              else if (mode === "verbs") modifier = " (Style instruction: Swap passive words with top-tier product leader action verbs)";
-              else if (mode === "metrics") modifier = " (Style instruction: Creatively inject realistic estimated numbers, KPIs and percentage gains)";
-              else if (mode === "flow") modifier = " (Style instruction: Polish readability metrics, flow and general grammar layout)";
+              if (mode === "improve") modifier = " (Style instruction: Improve the writing to make it professional, stellar, clear, and compelling)";
+              else if (mode === "professional") modifier = " (Style instruction: Completely rewrite this in a professional, top-tier executive level tone)";
+              else if (mode === "ats") modifier = " (Style instruction: Optimize for ATS scanners by checking formatting, keywords, and semantic terms)";
+              else if (mode === "star") modifier = " (Style instruction: Apply state-of-the-art STAR - Situation Task Action Result formatting with active impact metrics)";
+              else if (mode === "metrics") modifier = " (Style instruction: Creatively inject realistic estimated numbers, KPIs, business impact gains and percentage values)";
+              else if (mode === "expand") modifier = " (Style instruction: Expand upon the content with detailed professional achievements and actions)";
+              else if (mode === "shorten") modifier = " (Style instruction: Condensed this bullet point to make it more compact, single-lined, punchy and highly energetic)";
+              else if (mode === "grammar") modifier = " (Style instruction: Polish readability metrics, fix run-ons, grammar, flow and typos)";
 
               sparkle.innerHTML = "⚡";
               sparkle.classList.add("sparkle-spin-shimmer");

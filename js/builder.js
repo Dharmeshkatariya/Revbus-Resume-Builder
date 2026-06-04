@@ -1126,6 +1126,18 @@ class ResumeBuilder {
       } else if (rightHidden) {
         splitWorkspace.classList.add("hide-right");
       }
+
+      // Sync active state indicators on the compact Figma control rail buttons
+      const leftBtn = document.getElementById("btn-toggle-left-pane");
+      const rightBtn = document.getElementById("btn-toggle-right-pane");
+      if (leftBtn) {
+        if (leftHidden) leftBtn.classList.remove("active");
+        else leftBtn.classList.add("active");
+      }
+      if (rightBtn) {
+        if (rightHidden) rightBtn.classList.remove("active");
+        else rightBtn.classList.add("active");
+      }
     };
 
     document.getElementById("btn-toggle-left-pane")?.addEventListener("click", () => {
@@ -1146,14 +1158,21 @@ class ResumeBuilder {
       if (isActive) {
         bodyElem.classList.add("focus-mode-active");
         if (btnExitFocus) btnExitFocus.style.display = "flex";
+        document.getElementById("btn-toggle-focus-mode-rail")?.classList.add("active");
       } else {
         bodyElem.classList.remove("focus-mode-active");
         if (btnExitFocus) btnExitFocus.style.display = "none";
+        document.getElementById("btn-toggle-focus-mode-rail")?.classList.remove("active");
       }
     };
 
     document.getElementById("btn-toggle-focus-mode")?.addEventListener("click", () => {
       setFocusMode(true);
+    });
+
+    document.getElementById("btn-toggle-focus-mode-rail")?.addEventListener("click", () => {
+      const isCurrentlyActive = bodyElem.classList.contains("focus-mode-active");
+      setFocusMode(!isCurrentlyActive);
     });
 
     btnExitFocus?.addEventListener("click", () => {

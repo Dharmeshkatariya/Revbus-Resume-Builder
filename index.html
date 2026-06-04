@@ -841,17 +841,26 @@
 
             <!-- Center Interactive Live Preview Paper Canvas with Figma Control Deck -->
             <div class="builder-preview-panel">
+              <!-- Floating Premium Left Icon Rail Controls (Figma/Canva Spec) -->
+              <div class="floating-left-control-rail">
+                <button id="btn-toggle-left-pane" class="rail-btn active" title="Toggle Sidebar Editor">
+                  <i class="lucide-sidebar" style="width:16px; height:16px;"></i>
+                  <span class="rail-tooltip">Toggle Form Editor ( [ )</span>
+                </button>
+                <button id="btn-toggle-right-pane" class="rail-btn active" title="Toggle Designer Suite">
+                  <i class="lucide-layout-panel-right" style="width:16px; height:16px;"></i>
+                  <span class="rail-tooltip">Toggle Designer Suite ( ] )</span>
+                </button>
+                <button id="btn-toggle-focus-mode-rail" class="rail-btn" title="Focus Editing Mode">
+                  <i class="lucide-maximize-2" style="width:16px; height:16px;"></i>
+                  <span class="rail-tooltip">Full Focus Editor</span>
+                </button>
+              </div>
+
               <div class="preview-controls" style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); background:var(--bg-panel); height:60px; padding:0 20px;">
                 
-                <!-- Left: Panel toggles & Undo/Redo & Exit Focus overlay -->
+                <!-- Left: Undo/Redo & Focus triggers -->
                 <div style="display:flex; align-items:center; gap:8px;">
-                  <button id="btn-toggle-left-pane" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Toggle Content Form Left Panel">
-                    <i class="lucide-sidebar" style="width:16px; height:16px;"></i>
-                  </button>
-                  <button id="btn-toggle-right-pane" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Toggle Settings Customizer Right Panel">
-                    <i class="lucide-layout-panel-left" style="width:16px; height:16px; transform: scaleX(-1);"></i>
-                  </button>
-                  <div style="width:1px; height:20px; background:var(--border-color); margin:0 4px;"></div>
                   <button id="btn-undo-workspace" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Undo"><i class="lucide-undo" style="width:14px; height:14px;"></i></button>
                   <button id="btn-redo-workspace" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Redo"><i class="lucide-redo" style="width:14px; height:14px;"></i></button>
                 </div>
