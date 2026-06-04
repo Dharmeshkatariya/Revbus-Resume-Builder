@@ -4,6 +4,7 @@
    ========================================================================= */
 
 import { themeController } from "./theme.js";
+import { premiumEngine } from "./premium.js";
 import "./dashboard.js";
 
 class RevbsusMasterApp {
@@ -508,4 +509,5 @@ class RevbsusMasterApp {
 const app = new RevbsusMasterApp();
 document.addEventListener("DOMContentLoaded", () => {
   app.init();
+  premiumEngine.init();
 });
