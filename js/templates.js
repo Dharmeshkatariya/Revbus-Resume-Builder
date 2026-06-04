@@ -365,41 +365,117 @@ function renderHeader(data, config) {
   const hStyle = config.headerStyle || {};
   const p = data.personal || {};
   
-  const alignment = hStyle.alignment || "center";
+  const layout = hStyle.layout || "center";
+  const accentStyle = hStyle.accentStyle || "minimal";
   const fontFamily = hStyle.fontFamily || config.typography?.fontFamily || "Inter";
   
-  const borderBottom = hStyle.borderStyle === "solid-bottom" 
-    ? `border-bottom: 2px solid ${hStyle.borderColor || '#e5e7eb'}; padding-bottom: 12px;`
-    : hStyle.borderStyle === "double-bottom"
-    ? `border-bottom: 4px double ${hStyle.borderColor || '#e5e7eb'}; padding-bottom: 12px;`
-    : "";
+  // Custom margin controlled by spacing system
+  const headerGap = config.spacing?.headerGap !== undefined ? config.spacing.headerGap : 16;
+  
+  let layoutAlignment = "center";
+  if (layout === "left" || layout === "split") layoutAlignment = "left";
+  else if (layout === "right") layoutAlignment = "right";
+
+  // Accent style classes
+  let headerWrapperStyle = "padding: 0px;";
+  if (accentStyle === "glass") {
+    headerWrapperStyle = `
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px -3px rgba(0,0,0,0.03);
+    `;
+  } else if (accentStyle === "corporate") {
+    headerWrapperStyle = `
+      border-left: 5px solid ${config.colors?.accent || '#3b82f6'};
+      padding: 6px 16px;
+    `;
+  } else if (accentStyle === "luxury") {
+    headerWrapperStyle = `
+      border-top: 1px solid ${config.colors?.primary || '#111827'};
+      border-bottom: 1px solid ${config.colors?.primary || '#111827'};
+      padding: 16px 0;
+    `;
+  } else if (accentStyle === "creative") {
+    headerWrapperStyle = `
+      background: rgba(${hexToRgb(config.colors?.accent || '#3b82f6')}, 0.05);
+      border-radius: 8px;
+      padding: 16px;
+    `;
+  }
 
   const containerStyle = `
     font-family: '${fontFamily}', sans-serif;
-    text-align: ${alignment};
-    background: ${hStyle.background || 'transparent'};
-    margin-bottom: ${hStyle.spacing || 12}px;
-    ${borderBottom}
+    text-align: ${layoutAlignment};
+    margin-bottom: ${headerGap}px;
+    ${headerWrapperStyle}
   `;
 
-  const contactAlignment = alignment === "center" ? "justify-content: center;" : alignment === "right" ? "justify-content: flex-end;" : "justify-content: flex-start;";
+  const contactAlignment = layoutAlignment === "center" ? "justify-content: center;" : layoutAlignment === "right" ? "justify-content: flex-end;" : "justify-content: flex-start;";
 
+  // Generate contacts template editable markup
+  const contactsHtml = `
+    <div style="display: flex; flex-wrap: wrap; gap: 8px 16px; ${contactAlignment} font-size: 0.82rem; color: ${config.colors?.secondary || '#4b5563'}; margin-top: 10px; line-height: 1.4;">
+      ${p.email ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span contenteditable="true" data-path="personal.email">${p.email}</span></span>` : ""}
+      ${p.phone ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><span contenteditable="true" data-path="personal.phone">${p.phone}</span></span>` : ""}
+      ${p.address ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span contenteditable="true" data-path="personal.address">${p.address}</span></span>` : ""}
+      ${p.website ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12; cy=12; r=10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span contenteditable="true" data-path="personal.website">${p.website}</span></span>` : ""}
+    </div>
+  `;
+
+  // Render based on Layout type
+  if (layout === "split") {
+    return `
+      <header style="${containerStyle}">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div style="text-align: left; max-width: 60%;">
+            <h1 contenteditable="true" data-path="personal.name" style="font-size: ${hStyle.fontSizeName || 32}px; font-weight: ${hStyle.fontWeightName || '800'}; color: ${hStyle.colorName || config.colors?.primary || '#111827'}; margin: 0; letter-spacing: -0.5px; line-height: 1.1; outline:none;">
+              ${p.name || "Alex Sterling"}
+            </h1>
+            <p contenteditable="true" data-path="personal.title" style="font-size: ${hStyle.fontSizeTitle || 16}px; font-weight: ${hStyle.fontWeightTitle || '600'}; color: ${hStyle.colorTitle || config.colors?.accent || '#3b82f6'}; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; outline:none; margin-bottom: 0;">
+              ${p.title || ""}
+            </p>
+          </div>
+          <div style="text-align: right; font-size: 0.82rem; color: ${config.colors?.secondary || '#4b5563'}; max-width: 40%; line-height: 1.5;">
+            ${p.email ? `<div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;"><svg style="width:11px; height:11px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span contenteditable="true" data-path="personal.email">${p.email}</span></div>` : ""}
+            ${p.phone ? `<div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 2px;"><svg style="width:11px; height:11px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><span contenteditable="true" data-path="personal.phone">${p.phone}</span></div>` : ""}
+            ${p.address ? `<div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 2px;"><svg style="width:11px; height:11px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span contenteditable="true" data-path="personal.address">${p.address}</span></div>` : ""}
+            ${p.website ? `<div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 2px;"><svg style="width:11px; height:11px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span contenteditable="true" data-path="personal.website">${p.website}</span></div>` : ""}
+          </div>
+        </div>
+      </header>
+    `;
+  }
+
+  if (layout === "modern-hero") {
+    return `
+      <header style="${containerStyle}">
+        <div style="background: ${config.colors?.primary || '#111827'}; padding: 24px; border-radius: 8px; color: #ffffff; text-align: center;">
+          <h1 contenteditable="true" data-path="personal.name" style="font-size: ${hStyle.fontSizeName || 34}px; font-weight: 800; color: #ffffff; margin: 0; letter-spacing: -0.5px; line-height: 1.1; outline:none;">
+            ${p.name || "Alex Sterling"}
+          </h1>
+          <p contenteditable="true" data-path="personal.title" style="font-size: ${hStyle.fontSizeTitle || 16}px; font-weight: 600; color: ${config.colors?.accent || '#60a5fa'}; margin-top: 8px; text-transform: uppercase; letter-spacing: 1.5px; outline:none; margin-bottom: 0;">
+            ${p.title || ""}
+          </p>
+        </div>
+        ${contactsHtml}
+      </header>
+    `;
+  }
+
+  // Fallback default left/center/right visual flow
   return `
     <header style="${containerStyle}">
       <div>
-        <h1 style="font-size: ${hStyle.fontSizeName || 32}px; font-weight: ${hStyle.fontWeightName || '800'}; color: ${hStyle.colorName || config.colors?.primary || '#111827'}; margin: 0; letter-spacing: -0.5px; line-height: 1.1;">
+        <h1 contenteditable="true" data-path="personal.name" style="font-size: ${hStyle.fontSizeName || 32}px; font-weight: ${hStyle.fontWeightName || '800'}; color: ${hStyle.colorName || config.colors?.primary || '#111827'}; margin: 0; letter-spacing: -0.5px; line-height: 1.1; outline:none; display: inline-block;">
           ${p.name || "Alex Sterling"}
         </h1>
-        <p style="font-size: ${hStyle.fontSizeTitle || 16}px; font-weight: ${hStyle.fontWeightTitle || '600'}; color: ${hStyle.colorTitle || config.colors?.accent || '#3b82f6'}; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px;">
+        <p contenteditable="true" data-path="personal.title" style="font-size: ${hStyle.fontSizeTitle || 16}px; font-weight: ${hStyle.fontWeightTitle || '600'}; color: ${hStyle.colorTitle || config.colors?.accent || '#3b82f6'}; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; outline:none;">
           ${p.title || ""}
         </p>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 8px 16px; ${contactAlignment} font-size: 0.82rem; color: ${config.colors?.secondary || '#4b5563'}; margin-top: 10px; line-height: 1.4;">
-        ${p.email ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${p.email}</span>` : ""}
-        ${p.phone ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>${p.phone}</span>` : ""}
-        ${p.address ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${p.address}</span>` : ""}
-        ${p.website ? `<span style="display: inline-flex; align-items: center; gap: 4px;"><svg style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>${p.website}</span>` : ""}
-      </div>
+      ${contactsHtml}
     </header>
   `;
 }
@@ -409,6 +485,7 @@ function renderSectionTitle(style) {
   const fontFamily = style.fontFamily || "Inter";
   const color = style.color || "#111827";
   const iconMarkup = style.icon && iconSVGs[style.icon] ? iconSVGs[style.icon] : "";
+  const key = style.key || "";
 
   let titleStyle = `
     font-family: '${fontFamily}', sans-serif;
@@ -419,6 +496,8 @@ function renderSectionTitle(style) {
     letter-spacing: ${style.letterSpacing || 1}px;
     display: inline-flex;
     align-items: center;
+    border: none;
+    outline: none;
   `;
 
   let outerStyle = `
@@ -443,7 +522,7 @@ function renderSectionTitle(style) {
 
   return `
     <div style="${outerStyle}">
-      <span style="${titleStyle}">
+      <span contenteditable="true" data-path="sections.${key}.title" style="${titleStyle}">
         ${iconMarkup} ${style.title}
       </span>
     </div>
@@ -451,64 +530,70 @@ function renderSectionTitle(style) {
 }
 
 function renderSection(key, data, style, config) {
-  const sectionHeaderHtml = renderSectionTitle(style);
+  const sectionHeaderHtml = renderSectionTitle({ ...style, key });
   let contentHtml = "";
 
-  const textStyle = `font-size: 0.88rem; line-height: ${config.typography?.lineHeight || 1.5}; color: ${config.colors?.text || '#333333'}; text-align: ${config.alignments?.bodyContent || 'left'};`;
+  const textStyle = `font-size: 0.88rem; line-height: ${config.typography?.lineHeight || 1.5}; color: ${config.colors?.text || '#333333'}; text-align: ${config.alignments?.bodyContent || 'left'}; outline: none;`;
+
+  const rGap = config.spacing?.rowGap !== undefined ? config.spacing.rowGap : 14;
 
   if (key === "profile") {
     if (!data.profile) return "";
-    contentHtml = `<p style="${textStyle}">${data.profile}</p>`;
+    contentHtml = `<p contenteditable="true" data-path="profile" style="${textStyle}">${data.profile}</p>`;
   } else if (key === "experience") {
     if (!data.experience || !data.experience.length) return "";
-    contentHtml = data.experience.map(exp => `
-      <div style="margin-bottom: 16px;">
+    contentHtml = data.experience.map((exp, idx) => `
+      <div style="margin-bottom: ${rGap}px;">
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
-          <h4 style="font-size: 0.95rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${exp.role || "Lead Designer"}</h4>
-          <span style="font-size: 0.8rem; font-weight: 600; color: ${config.colors?.accent || '#2563eb'};">${exp.startDate || "2024"} — ${exp.endDate || "Present"}</span>
+          <h4 contenteditable="true" data-path="experience.${idx}.role" style="font-size: 0.95rem; font-weight: 700; color: ${config.colors?.primary || '#111827'}; outline:none; display:inline-block; margin:0;">${exp.role || "Lead Designer"}</h4>
+          <span style="font-size: 0.8rem; font-weight: 600; color: ${config.colors?.accent || '#2563eb'};">
+            <span contenteditable="true" data-path="experience.${idx}.startDate">${exp.startDate || "2024"}</span> — <span contenteditable="true" data-path="experience.${idx}.endDate">${exp.endDate || "Present"}</span>
+          </span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: ${config.colors?.secondary || '#6b7280'}; margin-bottom: 6px; font-weight: 500;">
-          <span>${exp.company || ""}</span>
-          <span>${exp.location || ""}</span>
+          <span contenteditable="true" data-path="experience.${idx}.company">${exp.company || ""}</span>
+          <span contenteditable="true" data-path="experience.${idx}.location">${exp.location || ""}</span>
         </div>
-        <p style="font-size: 0.85rem; color: ${config.colors?.text || '#4b5563'}; line-height: 1.5;">${exp.description || ""}</p>
+        <p contenteditable="true" data-path="experience.${idx}.description" style="font-size: 0.85rem; color: ${config.colors?.text || '#4b5563'}; line-height: 1.5; margin:0; outline:none;">${exp.description || ""}</p>
       </div>
     `).join('');
   } else if (key === "projects") {
     if (!data.projects || !data.projects.length) return "";
-    contentHtml = data.projects.map(proj => `
-      <div style="margin-bottom: 14px;">
+    contentHtml = data.projects.map((proj, idx) => `
+      <div style="margin-bottom: ${rGap}px;">
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
-          <h4 style="font-size: 0.92rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${proj.title || ""}</h4>
-          ${proj.url ? `<span style="font-size: 0.78rem; color: ${config.colors?.accent || '#2563eb'}; font-family: var(--font-mono);">${proj.url}</span>` : ""}
+          <h4 contenteditable="true" data-path="projects.${idx}.title" style="font-size: 0.92rem; font-weight: 700; color: ${config.colors?.primary || '#111827'}; outline:none; display:inline-block; margin:0;">${proj.title || ""}</h4>
+          ${proj.url ? `<span contenteditable="true" data-path="projects.${idx}.url" style="font-size: 0.78rem; color: ${config.colors?.accent || '#2563eb'}; font-family: var(--font-mono); outline:none;">${proj.url}</span>` : ""}
         </div>
-        <p style="font-size: 0.85rem; color: ${config.colors?.text || '#4b5563'}; line-height: 1.5; margin-bottom: 4px;">${proj.description || ""}</p>
-        ${proj.techStack ? `<div style="font-size: 0.78rem; font-family: var(--font-mono); color: ${config.colors?.secondary || '#6b7280'};">Stack: ${proj.techStack}</div>` : ""}
+        <p contenteditable="true" data-path="projects.${idx}.description" style="font-size: 0.85rem; color: ${config.colors?.text || '#4b5563'}; line-height: 1.5; margin-bottom: 4px; outline:none;">${proj.description || ""}</p>
+        ${proj.techStack ? `<div style="font-size: 0.78rem; font-family: var(--font-mono); color: ${config.colors?.secondary || '#6b7280'};">Stack: <span contenteditable="true" data-path="projects.${idx}.techStack" style="outline:none;">${proj.techStack}</span></div>` : ""}
       </div>
     `).join('');
   } else if (key === "education") {
     if (!data.education || !data.education.length) return "";
-    contentHtml = data.education.map(edu => `
-      <div style="margin-bottom: 14px;">
+    contentHtml = data.education.map((edu, idx) => `
+      <div style="margin-bottom: ${rGap}px;">
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
-          <h4 style="font-size: 0.92rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${edu.degree || ""}</h4>
-          <span style="font-size: 0.8rem; font-weight: 600; color: ${config.colors?.accent || '#2563eb'};">${edu.startDate || "2020"} — ${edu.endDate || "2024"}</span>
+          <h4 contenteditable="true" data-path="education.${idx}.degree" style="font-size: 0.92rem; font-weight: 700; color: ${config.colors?.primary || '#111827'}; outline:none; display:inline-block; margin:0;">${edu.degree || ""}</h4>
+          <span style="font-size: 0.8rem; font-weight: 600; color: ${config.colors?.accent || '#2563eb'};">
+            <span contenteditable="true" data-path="education.${idx}.startDate">${edu.startDate || "2020"}</span> — <span contenteditable="true" data-path="education.${idx}.endDate">${edu.endDate || "2024"}</span>
+          </span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: ${config.colors?.secondary || '#6b7280'}; margin-bottom: 4px;">
-          <span>${edu.school || ""}</span>
-          <span>${edu.location || ""}</span>
+          <span contenteditable="true" data-path="education.${idx}.school">${edu.school || ""}</span>
+          <span contenteditable="true" data-path="education.${idx}.location">${edu.location || ""}</span>
         </div>
-        ${edu.description ? `<p style="font-size: 0.80rem; color: ${config.colors?.text || '#4b5563'}; margin-top: 4px;">${edu.description}</p>` : ""}
+        ${edu.description ? `<p contenteditable="true" data-path="education.${idx}.description" style="font-size: 0.80rem; color: ${config.colors?.text || '#4b5563'}; margin-top: 4px; outline:none;">${edu.description}</p>` : ""}
       </div>
     `).join('');
   } else if (key === "skills") {
     if (!data.skills || !data.skills.length) return "";
     contentHtml = `
       <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-        ${data.skills.map(skill => `
+        ${data.skills.map((skill, idx) => `
           <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; background: rgba(0,0,0,0.03); color: ${config.colors?.text || '#333333'}; font-weight: 500; border-left: 3px solid ${config.colors?.accent || '#2563eb'}; padding: 4px 8px; border-radius: 4px;">
-            <span>${skill.name || ""}</span>
-            <span style="font-size: 0.72rem; color: ${config.colors?.accent || '#2563eb'}; font-weight: bold;">[${skill.level || "4"}]</span>
+            <span contenteditable="true" data-path="skills.${idx}.name">${skill.name || ""}</span>
+            <span style="font-size: 0.72rem; color: ${config.colors?.accent || '#2563eb'}; font-weight: bold;">[<span contenteditable="true" data-path="skills.${idx}.level">${skill.level || "4"}</span>]</span>
           </div>
         `).join('')}
       </div>
@@ -517,21 +602,21 @@ function renderSection(key, data, style, config) {
     if (!data.languages || !data.languages.length) return "";
     contentHtml = `
       <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-        ${data.languages.map(lang => `
+        ${data.languages.map((lang, idx) => `
           <span style="font-size: 0.82rem; color: ${config.colors?.text || '#333333'}; background: rgba(0,0,0,0.02); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>${lang.name}</strong>: <span style="color: ${config.colors?.secondary || '#6b7280'}; font-size: 0.78rem;">${lang.proficiency}</span>
+            <strong contenteditable="true" data-path="languages.${idx}.name">${lang.name}</strong>: <span contenteditable="true" data-path="languages.${idx}.proficiency" style="color: ${config.colors?.secondary || '#6b7280'}; font-size: 0.78rem;">${lang.proficiency}</span>
           </span>
         `).join('')}
       </div>
     `;
   } else if (key === "certifications") {
     if (!data.certifications || !data.certifications.length) return "";
-    contentHtml = data.certifications.map(cert => `
-      <div style="margin-bottom: 10px;">
-        <div style="font-size: 0.88rem; font-weight: 700; color: ${config.colors?.primary || '#111827'};">${cert.title || ""}</div>
+    contentHtml = data.certifications.map((cert, idx) => `
+      <div style="margin-bottom: ${rGap}px;">
+        <div contenteditable="true" data-path="certifications.${idx}.title" style="font-size: 0.88rem; font-weight: 700; color: ${config.colors?.primary || '#111827'}; outline:none;">${cert.title || ""}</div>
         <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: ${config.colors?.secondary || '#6b7280'};">
-          <span>${cert.issuer || ""}</span>
-          <span>${cert.date || ""}</span>
+          <span contenteditable="true" data-path="certifications.${idx}.issuer">${cert.issuer || ""}</span>
+          <span contenteditable="true" data-path="certifications.${idx}.date">${cert.date || ""}</span>
         </div>
       </div>
     `).join('');
@@ -611,8 +696,10 @@ function renderSection(key, data, style, config) {
     }
   }
 
+  const secGap = config.spacing?.sectionGap !== undefined ? config.spacing.sectionGap : 24;
+
   return `
-    <section style="margin-bottom: 18px;">
+    <section style="margin-bottom: ${secGap}px;">
       ${sectionHeaderHtml}
       <div style="margin-top: 10px;">
         ${contentHtml}

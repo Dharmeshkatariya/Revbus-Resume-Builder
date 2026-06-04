@@ -704,7 +704,7 @@ class ResumeBuilder {
       this.designerConfig = getTemplatePreset(this.activeTemplate || "modern-minimal");
     }
 
-    // --- Tab 2: Layout ---
+    // --- Tab 1: Layouts & Columns ---
     const layout = this.designerConfig.layout || "single-column";
     document.querySelectorAll(".layout-card").forEach(card => {
       card.classList.toggle("active", card.getAttribute("data-layout") === layout);
@@ -723,6 +723,63 @@ class ResumeBuilder {
     if (alignBSelect) alignBSelect.value = bAlign;
     const alignCSelect = document.getElementById("align-contact");
     if (alignCSelect) alignCSelect.value = cAlign;
+
+    // --- Tab 1: Geometry Widths ---
+    if (!this.designerConfig.geometry) {
+      this.designerConfig.geometry = {
+        width: 820,
+        sidebarWidth: 260,
+        pageFormat: "a4",
+        showPageBreaks: true
+      };
+    }
+    const geom = this.designerConfig.geometry;
+    const sWidth = document.getElementById("slider-resume-width");
+    if (sWidth) sWidth.value = geom.width || 820;
+    const lblWidth = document.getElementById("lbl-resume-width");
+    if (lblWidth) lblWidth.innerText = `${geom.width || 820}px`;
+
+    const sSideWidth = document.getElementById("slider-sidebar-width");
+    if (sSideWidth) sSideWidth.value = geom.sidebarWidth || 260;
+    const lblSideWidth = document.getElementById("lbl-sidebar-width");
+    if (lblSideWidth) lblSideWidth.innerText = `${geom.sidebarWidth || 260}px`;
+
+    const selectWidthPreset = document.getElementById("width-preset-select");
+    if (selectWidthPreset) {
+      if (geom.width === 820) selectWidthPreset.value = "modern";
+      else if (geom.width === 800) selectWidthPreset.value = "ats";
+      else if (geom.width === 740) selectWidthPreset.value = "compact";
+      else if (geom.width === 960) selectWidthPreset.value = "wide";
+      else selectWidthPreset.value = "custom";
+    }
+
+    // --- Tab 2: Header Styles ---
+    const hStyle = this.designerConfig.headerStyle || {};
+    const selectHeaderLayout = document.getElementById("header-layout-select");
+    if (selectHeaderLayout) selectHeaderLayout.value = hStyle.layout || "left";
+    const selectHeaderAccent = document.getElementById("header-accent-style-select");
+    if (selectHeaderAccent) selectHeaderAccent.value = hStyle.accentStyle || "minimal";
+
+    const hFont = document.getElementById("h-font");
+    if (hFont) hFont.value = hStyle.fontFamily || "Inter";
+    const hSizeName = document.getElementById("h-size-name");
+    if (hSizeName) hSizeName.value = hStyle.fontSizeName || 32;
+    const lblSizeName = document.getElementById("lbl-h-size-name");
+    if (lblSizeName) lblSizeName.innerText = `${hStyle.fontSizeName || 32}px`;
+
+    const hWeightName = document.getElementById("h-weight-name");
+    if (hWeightName) hWeightName.value = hStyle.fontWeightName || "800";
+    const hSizeTitle = document.getElementById("h-size-title");
+    if (hSizeTitle) hSizeTitle.value = hStyle.fontSizeTitle || 16;
+    const lblSizeTitle = document.getElementById("lbl-h-size-title");
+    if (lblSizeTitle) lblSizeTitle.innerText = `${hStyle.fontSizeTitle || 16}px`;
+
+    const hWeightTitle = document.getElementById("h-weight-title");
+    if (hWeightTitle) hWeightTitle.value = hStyle.fontWeightTitle || "600";
+    const hBorder = document.getElementById("h-border");
+    if (hBorder) hBorder.value = hStyle.borderStyle || "none";
+    const hSpacing = document.getElementById("h-spacing");
+    if (hSpacing) hSpacing.value = hStyle.spacing || 12;
 
     // --- Tab 3: Typography System ---
     const tConfig = this.designerConfig.typography || {};
@@ -767,6 +824,13 @@ class ResumeBuilder {
     this.syncColorElement("text", colText);
     this.syncColorElement("bg", colBg);
 
+    // Sync Preset Shade Select active border
+    document.querySelectorAll(".paper-shade-btn").forEach(btn => {
+      const shadeAttr = btn.getAttribute("data-shade");
+      const currentShade = themeController.config?.paperShade || "pure-white";
+      btn.classList.toggle("active", shadeAttr === currentShade);
+    });
+
     // --- Tab 5: Section Layouts & Overrides ---
     const globalHeaderSelect = document.getElementById("toggle-global-headers");
     if (globalHeaderSelect) {
@@ -779,7 +843,7 @@ class ResumeBuilder {
 
     const sHeaders = this.designerConfig.sectionHeaders || {};
     const ghFont = document.getElementById("global-header-font");
-    if (ghFont) ghFont.value = sHeaders.fontFamily || "Poppins";
+    if (ghFont) ghFont.value = sHeaders.fontFamily || "Inter";
     const ghSize = document.getElementById("global-header-size");
     if (ghSize) ghSize.value = sHeaders.fontSize || 14;
     const ghWeight = document.getElementById("global-header-weight");
@@ -790,24 +854,51 @@ class ResumeBuilder {
     this.renderSectionsAccordion();
     this.renderSectionOrderControls();
 
-    // --- Tab 6: Header Settings ---
-    const hStyle = this.designerConfig.headerStyle || {};
-    const hFont = document.getElementById("h-font");
-    if (hFont) hFont.value = hStyle.fontFamily || "Open Sans";
-    const hSizeName = document.getElementById("h-size-name");
-    if (hSizeName) hSizeName.value = hStyle.fontSizeName || 32;
-    const hWeightName = document.getElementById("h-weight-name");
-    if (hWeightName) hWeightName.value = hStyle.fontWeightName || "800";
-    const hSizeTitle = document.getElementById("h-size-title");
-    if (hSizeTitle) hSizeTitle.value = hStyle.fontSizeTitle || 16;
-    const hWeightTitle = document.getElementById("h-weight-title");
-    if (hWeightTitle) hWeightTitle.value = hStyle.fontWeightTitle || "600";
-    const hBorder = document.getElementById("h-border");
-    if (hBorder) hBorder.value = hStyle.borderStyle || "none";
-    const hSpacing = document.getElementById("h-spacing");
-    if (hSpacing) hSpacing.value = hStyle.spacing || 12;
+    // --- Tab 6: Spacing Controls ---
+    if (!this.designerConfig.spacing) {
+      this.designerConfig.spacing = {
+        margins: 40,
+        sectionGap: 24,
+        rowGap: 14,
+        columnGap: 24,
+        headerGap: 24
+      };
+    }
+    const sp = this.designerConfig.spacing;
 
-    // --- Tab 7: Preset Quick Highlight ---
+    const sMargins = document.getElementById("slider-margins");
+    if (sMargins) sMargins.value = sp.margins || 40;
+    const lblMargins = document.getElementById("label-margins");
+    if (lblMargins) lblMargins.innerText = `${sp.margins || 40}px`;
+
+    const sSectionGap = document.getElementById("slider-section-gap");
+    if (sSectionGap) sSectionGap.value = sp.sectionGap || 24;
+    const lblSectionGap = document.getElementById("lbl-section-gap");
+    if (lblSectionGap) lblSectionGap.innerText = `${sp.sectionGap || 24}px`;
+
+    const sRowGap = document.getElementById("slider-row-gap");
+    if (sRowGap) sRowGap.value = sp.rowGap || 14;
+    const lblRowGap = document.getElementById("lbl-row-gap");
+    if (lblRowGap) lblRowGap.innerText = `${sp.rowGap || 14}px`;
+
+    const sColumnGap = document.getElementById("slider-column-gap");
+    if (sColumnGap) sColumnGap.value = sp.columnGap || 24;
+    const lblColumnGap = document.getElementById("lbl-column-gap");
+    if (lblColumnGap) lblColumnGap.innerText = `${sp.columnGap || 24}px`;
+
+    const sHeaderGap = document.getElementById("slider-header-gap");
+    if (sHeaderGap) sHeaderGap.value = sp.headerGap || 24;
+    const lblHeaderGap = document.getElementById("lbl-header-gap");
+    if (lblHeaderGap) lblHeaderGap.innerText = `${sp.headerGap || 24}px`;
+
+    // --- Tab 6: Page Break settings ---
+    const selectFormat = document.getElementById("page-format-select");
+    if (selectFormat) selectFormat.value = geom.pageFormat || "a4";
+
+    const chkPageBreaks = document.getElementById("chk-show-page-breaks");
+    if (chkPageBreaks) chkPageBreaks.checked = geom.showPageBreaks !== false;
+
+    // --- Quick Preset Cards highlighted ---
     document.querySelectorAll(".preset-card").forEach(pCard => {
       const prKey = pCard.getAttribute("data-preset");
       pCard.classList.toggle("active", prKey === this.activeTemplate);
@@ -986,6 +1077,89 @@ class ResumeBuilder {
   }
 
   setupDesignerListeners() {
+    // --- Canvas Zoom Engine ---
+    let zoomLevel = 1.0;
+    const documentPaperSheet = document.getElementById("document-paper-sheet");
+    const containerWrapper = document.querySelector(".canvas-zoom-wrapper");
+    const percentageLabel = document.getElementById("canvas-zoom-percentage");
+    
+    const updateZoomDisplay = () => {
+      if (percentageLabel) {
+        percentageLabel.textContent = `${Math.round(zoomLevel * 100)}%`;
+      }
+      if (containerWrapper) {
+        containerWrapper.style.setProperty("--zoom-level", zoomLevel);
+      }
+    };
+
+    document.getElementById("btn-zoom-in")?.addEventListener("click", () => {
+      if (zoomLevel < 2.0) {
+        zoomLevel = parseFloat((zoomLevel + 0.1).toFixed(1));
+        updateZoomDisplay();
+      }
+    });
+
+    document.getElementById("btn-zoom-out")?.addEventListener("click", () => {
+      if (zoomLevel > 0.5) {
+        zoomLevel = parseFloat((zoomLevel - 0.1).toFixed(1));
+        updateZoomDisplay();
+      }
+    });
+
+    document.getElementById("btn-zoom-fit")?.addEventListener("click", () => {
+      zoomLevel = 1.0;
+      updateZoomDisplay();
+    });
+
+    // --- Sidebar and Configurator Pane Toggles ---
+    const splitWorkspace = document.querySelector(".builder-split-screen");
+    let leftHidden = false;
+    let rightHidden = false;
+
+    const syncSplitClasses = () => {
+      if (!splitWorkspace) return;
+      splitWorkspace.classList.remove("hide-left", "hide-right", "hide-both");
+      if (leftHidden && rightHidden) {
+        splitWorkspace.classList.add("hide-both");
+      } else if (leftHidden) {
+        splitWorkspace.classList.add("hide-left");
+      } else if (rightHidden) {
+        splitWorkspace.classList.add("hide-right");
+      }
+    };
+
+    document.getElementById("btn-toggle-left-pane")?.addEventListener("click", () => {
+      leftHidden = !leftHidden;
+      syncSplitClasses();
+    });
+
+    document.getElementById("btn-toggle-right-pane")?.addEventListener("click", () => {
+      rightHidden = !rightHidden;
+      syncSplitClasses();
+    });
+
+    // --- Focus Mode Toggler ---
+    const bodyElem = document.body;
+    const btnExitFocus = document.getElementById("btn-exit-focus-mode");
+    
+    const setFocusMode = (isActive) => {
+      if (isActive) {
+        bodyElem.classList.add("focus-mode-active");
+        if (btnExitFocus) btnExitFocus.style.display = "flex";
+      } else {
+        bodyElem.classList.remove("focus-mode-active");
+        if (btnExitFocus) btnExitFocus.style.display = "none";
+      }
+    };
+
+    document.getElementById("btn-toggle-focus-mode")?.addEventListener("click", () => {
+      setFocusMode(true);
+    });
+
+    btnExitFocus?.addEventListener("click", () => {
+      setFocusMode(false);
+    });
+
     // --- Tabs Toggling ---
     document.querySelectorAll(".designer-tab-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
@@ -1416,6 +1590,235 @@ class ResumeBuilder {
         pCard.classList.add("active");
       });
     });
+
+    // --- Advanced Geometry & Spacing Event Listeners ---
+    document.getElementById("slider-resume-width")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.geometry) this.designerConfig.geometry = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.geometry.width = val;
+      const label = document.getElementById("lbl-resume-width");
+      if (label) label.innerText = `${val}px`;
+      
+      const selectWidthPreset = document.getElementById("width-preset-select");
+      if (selectWidthPreset) selectWidthPreset.value = "custom";
+      
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("slider-sidebar-width")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.geometry) this.designerConfig.geometry = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.geometry.sidebarWidth = val;
+      const label = document.getElementById("lbl-sidebar-width");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("width-preset-select")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.geometry) this.designerConfig.geometry = {};
+      const preset = e.target.value;
+      let targetWidth = 820;
+      if (preset === "modern") targetWidth = 820;
+      else if (preset === "ats") targetWidth = 800;
+      else if (preset === "compact") targetWidth = 740;
+      else if (preset === "wide") targetWidth = 960;
+      else return;
+
+      this.designerConfig.geometry.width = targetWidth;
+      const sWidth = document.getElementById("slider-resume-width");
+      if (sWidth) sWidth.value = targetWidth;
+      const label = document.getElementById("lbl-resume-width");
+      if (label) label.innerText = `${targetWidth}px`;
+      
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("header-layout-select")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.layout = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("header-accent-style-select")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.headerStyle) this.designerConfig.headerStyle = {};
+      this.designerConfig.headerStyle.accentStyle = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("slider-margins")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.spacing) this.designerConfig.spacing = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.spacing.margins = val;
+      const label = document.getElementById("label-margins");
+      if (label) label.innerText = `${val}px`;
+      
+      if (themeController) {
+        themeController.setMargins(val);
+      }
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("slider-section-gap")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.spacing) this.designerConfig.spacing = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.spacing.sectionGap = val;
+      const label = document.getElementById("lbl-section-gap");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("slider-row-gap")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.spacing) this.designerConfig.spacing = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.spacing.rowGap = val;
+      const label = document.getElementById("lbl-row-gap");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("slider-column-gap")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.spacing) this.designerConfig.spacing = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.spacing.columnGap = val;
+      const label = document.getElementById("lbl-column-gap");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("slider-header-gap")?.addEventListener("input", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.spacing) this.designerConfig.spacing = {};
+      const val = parseInt(e.target.value);
+      this.designerConfig.spacing.headerGap = val;
+      const label = document.getElementById("lbl-header-gap");
+      if (label) label.innerText = `${val}px`;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("page-format-select")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.geometry) this.designerConfig.geometry = {};
+      this.designerConfig.geometry.pageFormat = e.target.value;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.getElementById("chk-show-page-breaks")?.addEventListener("change", (e) => {
+      this.pushHistory();
+      if (!this.designerConfig.geometry) this.designerConfig.geometry = {};
+      this.designerConfig.geometry.showPageBreaks = e.target.checked;
+      this.updatePreview();
+      this.saveToStorage();
+    });
+
+    document.querySelectorAll(".paper-shade-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const shade = btn.getAttribute("data-shade");
+        const code = btn.getAttribute("data-code");
+        this.pushHistory();
+        if (themeController) {
+          themeController.setPaperShade(shade, code);
+        }
+        if (!this.designerConfig.colors) this.designerConfig.colors = {};
+        this.designerConfig.colors.background = code;
+        const pickerBg = document.getElementById("picker-bg");
+        if (pickerBg) pickerBg.value = code;
+        const hexBg = document.getElementById("hex-bg");
+        if (hexBg) hexBg.value = code;
+        
+        document.querySelectorAll(".paper-shade-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        
+        this.updatePreview();
+        this.saveToStorage();
+      });
+    });
+
+    // --- Direct WYSIWYG Canva-Style Live Preview Editing ---
+    const paperSheet = document.getElementById("document-paper-sheet");
+    if (paperSheet) {
+      // 1. Intercept keypress/input inside the contenteditable preview elements
+      paperSheet.addEventListener("input", (e) => {
+        const editableEl = e.target;
+        if (!editableEl || !editableEl.hasAttribute("contenteditable")) return;
+        
+        const path = editableEl.getAttribute("data-path");
+        if (!path) return;
+        
+        const textVal = editableEl.innerText;
+        
+        // Deep set value inside this.data
+        const setDeepValue = (obj, pathString, newVal) => {
+          const parts = pathString.split('.');
+          let current = obj;
+          for (let i = 0; i < parts.length - 1; i++) {
+            const part = parts[i];
+            const nextPart = parts[i + 1];
+            // Check if part represents an index
+            if (current[part] === undefined) {
+              current[part] = isNaN(nextPart) ? {} : [];
+            }
+            current = current[part];
+          }
+          current[parts[parts.length - 1]] = newVal;
+        };
+        
+        setDeepValue(this.data, path, textVal);
+        
+        // Save state silently to preserve typing performance
+        localStorage.setItem("resume_data", JSON.stringify(this.data));
+        
+        // Real-time update corresponding form inputs on the left pane instantly!
+        if (path === "profile") {
+          const inputEl = document.getElementById("personal-profile");
+          if (inputEl) inputEl.value = textVal;
+        } else if (path.startsWith("personal.")) {
+          const prop = path.replace("personal.", "");
+          const inputEl = document.getElementById(`personal-${prop}`);
+          if (inputEl) inputEl.value = textVal;
+        } else if (path.includes(".")) {
+          const parts = path.split(".");
+          if (parts.length === 3) {
+            const [section, idxStr, prop] = parts;
+            const inputEl = document.querySelector(`.req-bind[data-section="${section}"][data-index="${idxStr}"][data-prop="${prop}"]`);
+            if (inputEl) inputEl.value = textVal;
+          }
+        }
+        
+        // Trigger Ats Calculations real-time without rewriting the fully rendered DOM
+        const analysis = AIAssistant.analyzeResume(this.data);
+        this.updateAIConsoles(analysis);
+      });
+      
+      // On blur of a live editable text block, push history and update preview to clean up layout structures
+      paperSheet.addEventListener("focusout", (e) => {
+        const editableEl = e.target;
+        if (editableEl && editableEl.hasAttribute("contenteditable")) {
+          this.pushHistory();
+          this.updatePreview();
+          this.saveToStorage();
+        }
+      });
+    }
 
     // --- Tab 8: Custom Preserved Export Handlers ---
     document.getElementById("btn-export-pdf-custom")?.addEventListener("click", () => {

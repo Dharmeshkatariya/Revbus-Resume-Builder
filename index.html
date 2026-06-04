@@ -839,28 +839,483 @@
 
             </div>
 
-            <!-- Right Interactive Live Preview Sheet -->
+            <!-- Center Interactive Live Preview Paper Canvas with Figma Control Deck -->
             <div class="builder-preview-panel">
-              <div class="preview-controls">
-                <div style="display:flex; gap:12px;">
-                  <button id="btn-undo-workspace" class="btn-glass" style="padding:6px 12px; font-size:0.75rem;" title="Undo"><i class="lucide-undo"></i></button>
-                  <button id="btn-redo-workspace" class="btn-glass" style="padding:6px 12px; font-size:0.75rem;" title="Redo"><i class="lucide-redo"></i></button>
+              <div class="preview-controls" style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); background:var(--bg-panel); height:60px; padding:0 20px;">
+                
+                <!-- Left: Panel toggles & Undo/Redo & Exit Focus overlay -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button id="btn-toggle-left-pane" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Toggle Content Form Left Panel">
+                    <i class="lucide-sidebar" style="width:16px; height:16px;"></i>
+                  </button>
+                  <button id="btn-toggle-right-pane" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Toggle Settings Customizer Right Panel">
+                    <i class="lucide-layout-panel-left" style="width:16px; height:16px; transform: scaleX(-1);"></i>
+                  </button>
+                  <div style="width:1px; height:20px; background:var(--border-color); margin:0 4px;"></div>
+                  <button id="btn-undo-workspace" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Undo"><i class="lucide-undo" style="width:14px; height:14px;"></i></button>
+                  <button id="btn-redo-workspace" class="btn-glass" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; padding:0;" title="Redo"><i class="lucide-redo" style="width:14px; height:14px;"></i></button>
                 </div>
                 
-                <div style="display:flex; align-items:center; gap:12px;">
-                  <!-- Dynamic A4 printable Sheet indicator -->
-                  <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">A4 SHEET CANVAS</span>
-                  <button id="btn-toggle-canva-mode" class="btn-premium" style="padding:4px 10px; font-size:0.72rem; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); color:var(--text-muted); cursor:pointer; filter: brightness(0.9); height:28px; display:flex; align-items:center; gap:6px;">
-                    <i class="lucide-layout-grid" style="width:12px; height:12px;"></i> Enable Canva Designer
+                <!-- Center: Live Zoom controls -->
+                <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:4px 8px; border-radius:30px; border:1px solid var(--border-color);">
+                  <button id="btn-zoom-out" style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0; border:none; background:none; cursor:pointer; color:var(--text-muted);" title="Zoom Out"><i class="lucide-minus" style="width:13px; height:13px;"></i></button>
+                  <span id="canvas-zoom-percentage" style="font-size:0.75rem; font-weight:600; font-family:var(--font-mono); color:var(--text-main); min-width:38px; text-align:center;">100%</span>
+                  <button id="btn-zoom-in" style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0; border:none; background:none; cursor:pointer; color:var(--text-muted);" title="Zoom In"><i class="lucide-plus" style="width:13px; height:13px;"></i></button>
+                  <button id="btn-zoom-fit" class="btn-glass" style="font-size:0.65rem; padding:2px 8px; min-height:20px; border-radius:10px; text-transform:uppercase; font-weight:700;" title="Fit Width">Fit</button>
+                </div>
+
+                <!-- Right: Focus Mode activation -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button id="btn-toggle-focus-mode" class="btn-glass" style="height:34px; font-size:0.75rem; padding:0 12px; display:flex; align-items:center; gap:6px; background:rgba(var(--accent-rgb, 139, 92, 246), 0.05); color:var(--accent); border-color:rgba(var(--accent-rgb, 139, 92, 246), 0.2);" title="Full Focus Editing Mode">
+                    <i class="lucide-maximize-2" style="width:14px; height:14px;"></i> Focus Mode
+                  </button>
+                  <button id="btn-toggle-canva-mode" class="btn-premium" style="display:none; padding:4px 10px; font-size:0.72rem; height:28px; align-items:center; gap:6px;">
+                    <i class="lucide-layout-grid" style="width:12px; height:12px;"></i> Canva Designer
                   </button>
                 </div>
               </div>
 
+              <!-- Exit Focus button circular overlay -->
+              <button id="btn-exit-focus-mode" class="btn-premium" style="position: absolute; top: 16px; right: 20px; z-index: 1100; display: none; align-items: center; gap: 8px; border-radius: 99px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); font-size: 0.8rem; padding: 10px 20px;">
+                <i class="lucide-minimize-2" style="width:14px; height:14px;"></i> Exit Focus Mode
+              </button>
+
               <!-- Sheet Scroller Frame -->
               <div class="preview-scroller">
-                <div id="document-paper-sheet" class="paper-sheet-wrap">
-                  <!-- Generated layouts compile cleanly here via templates module -->
+                <!-- Zoom Container Wrapper -->
+                <div class="canvas-zoom-wrapper" style="transform: scale(var(--zoom-level, 1)); transform-origin: top center; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); display: flex; justify-content: center; width: 100%; min-height: 100%; margin-top:20px; margin-bottom:80px;">
+                  <div id="document-paper-sheet" class="paper-sheet-wrap">
+                    <!-- Generated layouts compile cleanly here via templates module -->
+                  </div>
                 </div>
+              </div>
+            </div>
+
+            <!-- New Right Figma-style Designer Panel -->
+            <div class="builder-designer-panel">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding: 20px 20px 5px 20px;">
+                <h3 style="font-size:1.05rem; font-weight:800; display:flex; align-items:center; gap:8px; color:var(--text-main);"><i class="lucide-palette" style="color:var(--accent); width:16px;"></i> Designer Suite</h3>
+              </div>
+              <p style="font-size:0.7rem; color:var(--text-muted); margin-bottom:12px; border-bottom:1px solid var(--border-color); padding: 0 20px 14px 20px;">
+                Figma-level control over fonts, alignments, colors, section layers, and margins.
+              </p>
+
+              <!-- Tab triggers styled perfectly to match underlying JS logic -->
+              <div class="drawer-tabs" style="display:flex; gap:6px; border-bottom:1px solid var(--border-color); padding:0 16px 12px 16px; overflow-x:auto; scrollbar-width: none;">
+                <button class="theme-drawer-tab-btn active" data-drawer-tab="layout" title="Layout Settings"><i class="lucide-layout" style="width:13px; height:13px;"></i>Layout</button>
+                <button class="theme-drawer-tab-btn" data-drawer-tab="header" title="Master Header Designer"><i class="lucide-heading" style="width:13px; height:13px;"></i>Header</button>
+                <button class="theme-drawer-tab-btn" data-drawer-tab="typo" title="Type System"><i class="lucide-type" style="width:13px; height:13px;"></i>Type</button>
+                <button class="theme-drawer-tab-btn" data-drawer-tab="colors" title="Theme Palettes"><i class="lucide-palette" style="width:13px; height:13px;"></i>Colors</button>
+                <button class="theme-drawer-tab-btn" data-drawer-tab="sections" title="Section Layers"><i class="lucide-layers" style="width:13px; height:13px;"></i>Sections</button>
+                <button class="theme-drawer-tab-btn" data-drawer-tab="spacing" title="Margins & Gaps"><i class="lucide-split" style="width:13px; height:13px;"></i>Spacing</button>
+              </div>
+
+              <!-- Scrollable content list of settings tab frames -->
+              <div style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px;">
+                
+                <!-- TAB 1: LAYOUT SETTINGS -->
+                <div id="drawer-tab-layout" class="drawer-tab-content-panel active" style="display:flex; flex-direction:column; gap:16px;">
+                  <div>
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Select Grid Columns</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                      <div class="layout-card active" data-layout="single-column" style="padding:10px; border:1px solid var(--border-color); border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        <span style="font-size:0.75rem; font-weight:700; display:block;">Single Column</span>
+                        <span style="font-size:0.65rem; color:var(--text-muted);">Standard ATS format</span>
+                      </div>
+                      <div class="layout-card" data-layout="two-column" style="padding:10px; border:1px solid var(--border-color); border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        <span style="font-size:0.75rem; font-weight:700; display:block;">Two Column (L)</span>
+                        <span style="font-size:0.65rem; color:var(--text-muted);">Sidebar on left</span>
+                      </div>
+                      <div class="layout-card" data-layout="right-sidebar" style="padding:10px; border:1px solid var(--border-color); border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s; grid-column: span 2;">
+                        <span style="font-size:0.75rem; font-weight:700; display:block;">Two Column (Right)</span>
+                        <span style="font-size:0.65rem; color:var(--text-muted);">Sidebar on right</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px; display:flex; flex-direction:column; gap:10px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Alignment Flows</h4>
+                    <div>
+                      <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Main Header Details</label>
+                      <select id="align-header" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                        <option value="left" selected>Left Aligned</option>
+                        <option value="center">Centered Classic</option>
+                        <option value="right">Right Aligned</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Section Titles Align</label>
+                      <select id="align-sections" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                        <option value="left" selected>Left Aligned</option>
+                        <option value="center">Centered Classic</option>
+                        <option value="right">Right Aligned</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Body Details</label>
+                      <select id="align-body" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                        <option value="left" selected>Left Aligned</option>
+                        <option value="justify">Justified Block</option>
+                        <option value="right">Right Aligned</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Header Contact Columns</label>
+                      <select id="align-contact" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                        <option value="row" selected>Horizontal Row</option>
+                        <option value="grid">2-Column Grid</option>
+                        <option value="stack">Stacked Vertical List</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TAB 2: HEADER DESIGNER -->
+                <div id="drawer-tab-header" class="drawer-tab-content-panel" style="display:none; flex-direction:column; gap:16px;">
+                  <div>
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Header Architecture Layouts</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+                      <div>
+                        <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Header Layout</label>
+                        <select id="header-layout-select" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                          <option value="left" selected>Left Column</option>
+                          <option value="center">Centered Simple</option>
+                          <option value="right">Right Sided</option>
+                          <option value="split">Split Row Hero</option>
+                          <option value="modern-hero">Banner Fill Accent</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Contrast Style</label>
+                        <select id="header-accent-style-select" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                          <option value="minimal" selected>Minimal Slate</option>
+                          <option value="glass">Glassmorphic Fill</option>
+                          <option value="corporate">Classy Line Border</option>
+                          <option value="luxury">Double Gold Ribbon</option>
+                          <option value="creative">Solid Banner Color</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Header Heading Font</label>
+                      <select id="h-font" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                        <option value="Inter" selected>Standard General Font</option>
+                        <option value="Playfair Display">Playfair Display serif</option>
+                        <option value="Poppins">Poppins Modern</option>
+                        <option value="Montserrat">Montserrat Grotesk</option>
+                        <option value="Space Grotesk">Space Grotesk Tech</option>
+                        <option value="JetBrains Mono">JetBrains Mono Code</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px; display:flex; flex-direction:column; gap:10px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Name & Role Configuration</h4>
+                    <div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <label style="font-size:0.68rem; color:var(--text-muted);">Full Name size</label>
+                        <span id="lbl-h-size-name" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">32px</span>
+                      </div>
+                      <input type="range" id="h-size-name" min="16" max="52" value="32" style="width:100%; accent-color:var(--accent);">
+                    </div>
+                    <div>
+                      <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Name Font Weight</label>
+                      <select id="h-weight-name" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                        <option value="400">Regular (400)</option>
+                        <option value="600">Semi-Bold (600)</option>
+                        <option value="800" selected>Extra Bold (800)</option>
+                        <option value="900">Black Block (900)</option>
+                      </select>
+                    </div>
+                    <div style="margin-top:4px;">
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <label style="font-size:0.68rem; color:var(--text-muted);">Job Title size</label>
+                        <span id="lbl-h-size-title" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">16px</span>
+                      </div>
+                      <input type="range" id="h-size-title" min="12" max="28" value="16" style="width:100%; accent-color:var(--accent);">
+                    </div>
+                    <div>
+                      <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Job Title Weight</label>
+                      <select id="h-weight-title" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                        <option value="400">Light (400)</option>
+                        <option value="600" selected>Medium-Bold (600)</option>
+                        <option value="700">Bold (700)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div>
+                      <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Bottom Line Accents</label>
+                      <select id="h-border" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                        <option value="none" selected>No divider line</option>
+                        <option value="solid-bottom">Solid bottom line</option>
+                        <option value="double-bottom">Double line</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Under Gap (px)</label>
+                      <input type="number" id="h-spacing" class="input-premium" value="12" min="0" max="80" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TAB 3: TYPOGRAPHY DESIGNER -->
+                <div id="drawer-tab-typo" class="drawer-tab-content-panel" style="display:none; flex-direction:column; gap:16px;">
+                  <div>
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Select Typography Families</h4>
+                    <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Primary Document Font</label>
+                    <select id="typo-font" class="input-premium" style="font-size:0.78rem; height:36px; width:100%; padding:2px 8px;">
+                      <option value="Inter" selected>Inter Neo-Grotesque</option>
+                      <option value="Poppins">Poppins Modern Geometry</option>
+                      <option value="Montserrat">Montserrat Architectural</option>
+                      <option value="DM Sans font">DM Sans Flat Sans</option>
+                      <option value="Playfair Display">Playfair Display serif</option>
+                      <option value="Roboto">Roboto Clean Standard</option>
+                      <option value="Open Sans">Open Sans Geometric</option>
+                      <option value="Lora">Lora Warm Editorial Serif</option>
+                      <option value="JetBrains Mono">JetBrains Mono Code</option>
+                    </select>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px; display:flex; flex-direction:column; gap:14px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Font Geometry Sliders</h4>
+                    <div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <label style="font-size:0.7rem; color:var(--text-muted);">General Body Sizing</label>
+                        <span id="typo-size-val" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">14px</span>
+                      </div>
+                      <input type="range" id="typo-size" min="11" max="20" value="14" style="width:100%; accent-color:var(--accent);">
+                    </div>
+                    <div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <label style="font-size:0.7rem; color:var(--text-muted);">Document Line Height</label>
+                        <span id="typo-height-val" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">1.50</span>
+                      </div>
+                      <input type="range" id="typo-height" min="10" max="24" value="15" style="width:100%; accent-color:var(--accent);">
+                    </div>
+                    <div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <label style="font-size:0.7rem; color:var(--text-muted);">Letter Spacing (tracking)</label>
+                        <span id="typo-spacing-val" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">0px</span>
+                      </div>
+                      <input type="range" id="typo-spacing" min="0" max="8" value="0" style="width:100%; accent-color:var(--accent);">
+                    </div>
+                    <div>
+                      <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">General Document weight</label>
+                      <select id="typo-weight" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 6px;">
+                        <option value="300">Light Text (300)</option>
+                        <option value="400" selected>Regular Text (400)</option>
+                        <option value="500">Medium weighting (500)</option>
+                        <option value="600">Semi-Bold weight (600)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TAB 4: COLOR SYSTEM -->
+                <div id="drawer-tab-colors" class="drawer-tab-content-panel" style="display:none; flex-direction:column; gap:16px;">
+                  <div>
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Aesthetic Accent Presets</h4>
+                    <div class="preset-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:6px;">
+                      <button class="preset-dot active" data-preset="midnight-black" title="Carbon Slate" style="background:#111; border: 1px solid var(--border-color); height:28px; border-radius:4px; display: flex; align-items: center; justify-content: center; cursor:pointer;"><div style="width:10px; height:10px; border-radius:50%; background:#fff;"></div></button>
+                      <button class="preset-dot" data-preset="ocean-blue" title="Cobalt Sea" style="background:#2563eb; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                      <button class="preset-dot" data-preset="purple-galaxy" title="Neon Violet" style="background:#8b5cf6; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                      <button class="preset-dot" data-preset="emerald-green" title="Forest Mint" style="background:#10b981; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                      <button class="preset-dot" data-preset="sunset-orange" title="Amber Flare" style="background:#f97316; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                      <button class="preset-dot" data-preset="rose-pink" title="Soft Rose" style="background:#ec4899; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                      <button class="preset-dot" data-preset="cyber-neon" title="Lime Lime" style="background:#39ff14; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                      <button class="preset-dot" data-preset="arctic-white" title="Glacier Sky" style="background:#38bdf8; border:none; height:28px; border-radius:4px; cursor:pointer;"></button>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Custom Color Palette</h4>
+                    
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                      <!-- Primary Color -->
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 10px; border-radius:6px;">
+                        <span style="font-size:0.72rem; font-weight:600; color:#ffffff;">Primary (Headers)</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <input type="text" id="hex-primary" class="input-premium" value="#111827" style="width:64px; height:24px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 4px;">
+                          <input type="color" id="picker-primary" value="#111827" style="width:24px; height:24px; border:none; padding:0; background:none; cursor:pointer;">
+                        </div>
+                      </div>
+                      <!-- Secondary Color -->
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 10px; border-radius:6px;">
+                        <span style="font-size:0.72rem; font-weight:600; color:#ffffff;">Secondary (Subtitles)</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <input type="text" id="hex-secondary" class="input-premium" value="#4b5563" style="width:64px; height:24px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 4px;">
+                          <input type="color" id="picker-secondary" value="#4b5563" style="width:24px; height:24px; border:none; padding:0; background:none; cursor:pointer;">
+                        </div>
+                      </div>
+                      <!-- Accent Color -->
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 10px; border-radius:6px;">
+                        <span style="font-size:0.72rem; font-weight:600; color:#ffffff;">Accent highlights</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <input type="text" id="hex-accent" class="input-premium" value="#8b5cf6" style="width:64px; height:24px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 4px;">
+                          <input type="color" id="picker-accent" value="#8b5cf6" style="width:24px; height:24px; border:none; padding:0; background:none; cursor:pointer;">
+                        </div>
+                      </div>
+                      <!-- Text Color -->
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 10px; border-radius:6px;">
+                        <span style="font-size:0.72rem; font-weight:600; color:#ffffff;">Body General Text</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <input type="text" id="hex-text" class="input-premium" value="#1f2937" style="width:64px; height:24px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 4px;">
+                          <input type="color" id="picker-text" value="#1f2937" style="width:24px; height:24px; border:none; padding:0; background:none; cursor:pointer;">
+                        </div>
+                      </div>
+                      <!-- BG Color -->
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 10px; border-radius:6px;">
+                        <span style="font-size:0.72rem; font-weight:600; color:#ffffff;">Paper Canvas BG</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <input type="text" id="hex-bg" class="input-premium" value="#ffffff" style="width:64px; height:24px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 4px;">
+                          <input type="color" id="picker-bg" value="#ffffff" style="width:24px; height:24px; border:none; padding:0; background:none; cursor:pointer;">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Select Paper Stock Tint</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+                      <button class="paper-shade-btn active" data-shade="pure-white" data-code="#ffffff" style="background:#ffffff; color:#000; border:1px solid var(--border-color); padding:8px 0; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;" title="Pure Bleached White Stock">White</button>
+                      <button class="paper-shade-btn" data-shade="warm-ivory" data-code="#fdfbf7" style="background:#fdfbf7; color:#1c1917; border:1px solid var(--border-color); padding:8px 0; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;" title="Premium Editorial Ivory">Ivory</button>
+                      <button class="paper-shade-btn" data-shade="cool-gray" data-code="#f3f4f6" style="background:#f3f4f6; color:#111827; border:1px solid var(--border-color); padding:8px 0; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer;" title="Recycled Cool Slate">Recycled</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TAB 5: SECTIONS MANAGEMENT -->
+                <div id="drawer-tab-sections" class="drawer-tab-content-panel" style="display:none; flex-direction:column; gap:16px;">
+                  <div>
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Shared Header Variables</h4>
+                    <div style="margin-bottom:10px;">
+                      <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Master Sync Headers</label>
+                      <select id="toggle-global-headers" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                        <option value="on">Sync Styles with All Headers</option>
+                        <option value="off">De-couple (Override Per Section)</option>
+                      </select>
+                    </div>
+
+                    <!-- Shared Config Card -->
+                    <div id="wrapper-global-header-controls" style="display:flex; flex-direction:column; gap:8px; background:rgba(255,255,255,0.015); border:1px solid var(--border-color); padding:10px; border-radius:6px; margin-bottom:10px;">
+                      <div>
+                        <label style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:2px;">Shared Font Family</label>
+                        <select id="global-header-font" class="input-premium" style="font-size:0.72rem; height:28px; padding:2px 4px;">
+                          <option value="Inter" selected>Standard Document Font</option>
+                          <option value="Poppins">Poppins</option>
+                          <option value="Montserrat">Montserrat</option>
+                          <option value="Space Grotesk">Space Grotesk</option>
+                          <option value="Playfair Display">Playfair display</option>
+                        </select>
+                      </div>
+                      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <div>
+                          <label style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:2px;">Size (px)</label>
+                          <input type="number" id="global-header-size" class="input-premium" value="14" min="10" max="24" style="font-size:0.72rem; height:28px; margin:0; padding:2px 6px;">
+                        </div>
+                        <div>
+                          <label style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:2px;">Font Weight</label>
+                          <select id="global-header-weight" class="input-premium" style="font-size:0.72rem; height:28px; padding:2px 4px;">
+                            <option value="500">Medium (500)</option>
+                            <option value="600">Semi-Bold (600)</option>
+                            <option value="700" selected>Bold (700)</option>
+                            <option value="800">Extra Bold (800)</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:2px;">Bottom Accent Line</label>
+                        <select id="global-header-border" class="input-premium" style="font-size:0.72rem; height:28px; padding:2px 4px;">
+                          <option value="solid-bottom" selected>Solid bottom line</option>
+                          <option value="double-bottom">Double line below</option>
+                          <option value="solid-top">Solid line above</option>
+                          <option value="bullet">Left Accent Bullet</option>
+                          <option value="box">Capsulated Backdrop Fill</option>
+                          <option value="none">No Divider Accent</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Canvas Section Sorting Layers</h4>
+                    <div id="section-reorder-container" style="display:flex; flex-direction:column; gap:6px;">
+                      <!-- dynamic section items render here -->
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Individual Section Overrides</h4>
+                    <div id="individual-sections-override-list">
+                      <!-- Dynamic section accordion triggers here -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TAB 6: SPACING DESIGNER -->
+                <div id="drawer-tab-spacing" class="drawer-tab-content-panel" style="display:none; flex-direction:column; gap:16px;">
+                  <div>
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Document Spacing Geometry</h4>
+                    <div style="display:flex; flex-direction:column; gap:14px;">
+                      <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                          <label style="font-size:0.7rem; color:var(--text-muted);">Outer Page Margins</label>
+                          <span id="label-margins" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">40px</span>
+                        </div>
+                        <input type="range" id="slider-margins" min="15" max="65" value="40" style="width:100%; accent-color:var(--accent);">
+                      </div>
+                      <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                          <label style="font-size:0.7rem; color:var(--text-muted);">Section Sorter Gap</label>
+                          <span id="lbl-section-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">24px</span>
+                        </div>
+                        <input type="range" id="slider-section-gap" min="10" max="60" value="24" style="width:100%; accent-color:var(--accent);">
+                      </div>
+                      <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                          <label style="font-size:0.7rem; color:var(--text-muted);">Item Row Spacing</label>
+                          <span id="lbl-row-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">14px</span>
+                        </div>
+                        <input type="range" id="slider-row-gap" min="4" max="32" value="14" style="width:100%; accent-color:var(--accent);">
+                      </div>
+                      <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                          <label style="font-size:0.7rem; color:var(--text-muted);">Column Grid Spacing</label>
+                          <span id="lbl-column-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">24px</span>
+                        </div>
+                        <input type="range" id="slider-column-gap" min="10" max="50" value="24" style="width:100%; accent-color:var(--accent);">
+                      </div>
+                      <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                          <label style="font-size:0.7rem; color:var(--text-muted);">Header Spacing Gap</label>
+                          <span id="lbl-header-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">24px</span>
+                        </div>
+                        <input type="range" id="slider-header-gap" min="10" max="60" value="24" style="width:100%; accent-color:var(--accent);">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+                    <h4 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Multi Page Format Presets</h4>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                      <div>
+                        <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:4px;">Layout sheet Preset</label>
+                        <select id="page-format-select" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                          <option value="a4" selected>A4 Printable standard</option>
+                          <option value="letter">US Letter Standard</option>
+                          <option value="legal">US Legal Document</option>
+                        </select>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="chk-show-page-breaks" checked style="width:15px; height:15px; accent-color:var(--accent); cursor:pointer;">
+                        <label for="chk-show-page-breaks" style="font-size:0.72rem; color:#ffffff; cursor:pointer; user-select:none;">Show page break lines</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
 
@@ -1211,93 +1666,500 @@
   <button class="floating-customizer-btn" title="Open Customizer Settings Control"><i class="lucide-pipette"></i></button>
 
   <div id="theme-customizer-backdrop" class="customizer-backdrop"></div>
-  <div id="theme-settings-panel" class="customizer-drawer">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <h3 style="font-size:1.2rem; font-weight:800;">Aesthetic customization Drawer</h3>
-      <button id="close-customizer-btn" style="cursor:pointer; color:var(--text-muted);"><i class="lucide-x" style="width:20px;"></i></button>
+  <div id="theme-settings-panel" class="customizer-drawer" style="width: 440px; display: flex; flex-direction: column;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding: 20px 20px 5px 20px;">
+      <h3 style="font-size:1.15rem; font-weight:800; display:flex; align-items:center; gap:8px; color:#ffffff;"><i class="lucide-pipette" style="color:var(--accent);"></i> Designer Suite Pro</h3>
+      <button id="close-customizer-btn" style="cursor:pointer; color:var(--text-muted); background:none; border:none;"><i class="lucide-x" style="width:20px;"></i></button>
     </div>
-    <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:14px;">Tweak colors, styling borders, and shapes dynamically in physical sheet renders.</p>
+    <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; border-bottom:1px solid var(--border-color); padding: 0 20px 14px 20px;">
+      Customize layout architectures, alignment flows, typography sizes, advanced gradients, section headers style variables, and grids dynamically.
+    </p>
 
-    <!-- Theme Preset dots customizer -->
-    <div>
-      <h4 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Accent Preset Colors</h4>
-      <div class="preset-grid">
-        <!-- 1. midnight-black -->
-        <button class="preset-dot active" data-preset="midnight-black" title="Midnight Black">
-          <div class="preset-dot-color" style="background:#ffffff; border:1px solid #555;"></div>
-        </button>
-        <!-- 2. ocean-blue -->
-        <button class="preset-dot" data-preset="ocean-blue" title="Ocean Blue">
-          <div class="preset-dot-color" style="background:#2563eb;"></div>
-        </button>
-        <!-- 3. purple-galaxy -->
-        <button class="preset-dot" data-preset="purple-galaxy" title="Purple Galaxy">
-          <div class="preset-dot-color" style="background:#8b5cf6;"></div>
-        </button>
-        <!-- 4. emerald-green -->
-        <button class="preset-dot" data-preset="emerald-green" title="Emerald Green">
-          <div class="preset-dot-color" style="background:#10b981;"></div>
-        </button>
-        <!-- 5. sunset-orange -->
-        <button class="preset-dot" data-preset="sunset-orange" title="Sunset Orange">
-          <div class="preset-dot-color" style="background:#f97316;"></div>
-        </button>
-        <!-- 6. rose-pink -->
-        <button class="preset-dot" data-preset="rose-pink" title="Rose Pink">
-          <div class="preset-dot-color" style="background:#ec4899;"></div>
-        </button>
-        <!-- 7. cyber-neon -->
-        <button class="preset-dot" data-preset="cyber-neon" title="Cyber Neon">
-          <div class="preset-dot-color" style="background:#39ff14;"></div>
-        </button>
-        <!-- 8. arctic-white -->
-        <button class="preset-dot" data-preset="arctic-white" title="Arctic White">
-          <div class="preset-dot-color" style="background:#38bdf8;"></div>
-        </button>
-      </div>
+    <!-- TAB ICONS FOR SECTIONS OF SETTINGS -->
+    <div class="drawer-tabs" style="display:flex; gap:6px; border-bottom:1px solid var(--border-color); padding:0 20px 12px 20px; overflow-x:auto; scrollbar-width: none;">
+      <button class="theme-drawer-tab-btn active" data-drawer-tab="layout" title="Resume Layout & Grid Builder"><i class="lucide-layout" style="width:14px; height:14px;"></i>Layout</button>
+      <button class="theme-drawer-tab-btn" data-drawer-tab="header" title="Master Header Designer"><i class="lucide-heading" style="width:14px; height:14px;"></i>Header</button>
+      <button class="theme-drawer-tab-btn" data-drawer-tab="typo" title="Advanced Type System"><i class="lucide-type" style="width:14px; height:14px;"></i>Type</button>
+      <button class="theme-drawer-tab-btn" data-drawer-tab="colors" title="Gradient and Theme Palettes"><i class="lucide-palette" style="width:14px; height:14px;"></i>Colors</button>
+      <button class="theme-drawer-tab-btn" data-drawer-tab="sections" title="Individual Header Overrides"><i class="lucide-layers" style="width:14px; height:14px;"></i>Sections</button>
+      <button class="theme-drawer-tab-btn" data-drawer-tab="spacing" title="Document Geometry Sliders"><i class="lucide-split" style="width:14px; height:14px;"></i>Spacing</button>
     </div>
 
-    <!-- Layout Adjustments -->
-    <div style="margin-top:24px; border-top:1px solid var(--border-color); padding-top:20px;">
-      <h4 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px;">Document Geometry Sliders</h4>
-      
-      <!-- Font Size Slider -->
-      <div style="margin-bottom:18px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <label for="slider-font-size" style="font-size:0.85rem; font-weight:500;">Document Font Size</label>
-          <span id="label-font-size" style="font-size:0.8rem; font-family:var(--font-mono); color:var(--accent);">14px</span>
+    <!-- MAIN SCROLLABLE SETTINGS VIEWPORT -->
+    <div style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px;">
+
+      <!-- TAB 1: LAYOUT SETTINGS -->
+      <div id="drawer-tab-layout" class="drawer-tab-content-panel active">
+        <div>
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Select Layout Architecture</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div class="layout-card active" data-layout="single-column">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">ATS Column</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Standard full-wide</span>
+            </div>
+            <div class="layout-card" data-layout="two-column">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Two Column (Left)</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Responsive sidebar</span>
+            </div>
+            <div class="layout-card" data-layout="right-sidebar">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Two Column (Right)</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Right aligned sidebar</span>
+            </div>
+            <div class="layout-card" data-layout="executive">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Executive</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Mahogany centered</span>
+            </div>
+            <div class="layout-card" data-layout="grid-layout">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Creative Grid</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Aesthetic equal cells</span>
+            </div>
+            <div class="layout-card" data-layout="developer-layout">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Developer Terminal</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Console-grade mono</span>
+            </div>
+            <div class="layout-card" data-layout="modern-designer-layout">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Modern Designer</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Creative clean spaces</span>
+            </div>
+            <div class="layout-card" data-layout="portfolio-resume-layout">
+              <span style="font-size:0.75rem; font-weight:700; display:block;">Portfolio Show</span>
+              <span style="font-size:0.65rem; color:var(--text-muted);">Dual-column portfolio</span>
+            </div>
+          </div>
         </div>
-        <input type="range" id="slider-font-size" min="10" max="22" value="14" style="width:100%; height:6px; cursor:ew-resize; accent-color:var(--accent); background:rgba(255,255,255,0.1); border-radius:3px;">
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Interactive Grid Alignments</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Header Accent</label>
+              <select id="align-header" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                <option value="left" selected>Align Left</option>
+                <option value="center">Align Center</option>
+                <option value="right">Align Right</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Section Headings</label>
+              <select id="align-sections" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                <option value="left">Align Left</option>
+                <option value="center">Align Center</option>
+                <option value="right">Align Right</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Document Body</label>
+              <select id="align-body" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                <option value="left" selected>Align Left</option>
+                <option value="center">Align Center</option>
+                <option value="justify">Align Justified</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Contact Blocks</label>
+              <select id="align-contact" class="input-premium" style="font-size:0.75rem; height:34px; padding:2px 8px;">
+                <option value="left">Align Left</option>
+                <option value="center" selected>Align Center</option>
+                <option value="right">Align Right</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Sheet Boundary Limits</h4>
+          <div style="margin-bottom:8px;">
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Width Preset Settings</label>
+            <select id="width-preset-select" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="modern" selected>Modern Professional (820px)</option>
+              <option value="ats">ATS Standard (800px)</option>
+              <option value="compact">Compact Dense (740px)</option>
+              <option value="wide">Widescreen Cover (960px)</option>
+              <option value="custom">Custom Geometry</option>
+            </select>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Sheet Max Width</label>
+                <span id="lbl-resume-width" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">820px</span>
+              </div>
+              <input type="range" id="slider-resume-width" min="600" max="1100" value="820" style="width:100%; accent-color:var(--accent);">
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Sidebar Column Width</label>
+                <span id="lbl-sidebar-width" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">260px</span>
+              </div>
+              <input type="range" id="slider-sidebar-width" min="150" max="450" value="260" style="width:100%; accent-color:var(--accent);">
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Line Spacing Slider -->
-      <div style="margin-bottom:18px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <label for="slider-line-spacing" style="font-size:0.85rem; font-weight:500;">Line Spacing</label>
-          <span id="label-line-spacing" style="font-size:0.8rem; font-family:var(--font-mono); color:var(--accent);">1.50</span>
+      <!-- TAB 2: HEADER DESIGNER -->
+      <div id="drawer-tab-header" class="drawer-tab-content-panel">
+        <div>
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Header Architecture Flows</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Layout Design</label>
+              <select id="header-layout-select" class="input-premium" style="font-size:0.75rem; height:34px;">
+                <option value="left" selected>Left Aligned</option>
+                <option value="center">Centered Classic</option>
+                <option value="right">Right Aligned</option>
+                <option value="split">Split Row (Premium)</option>
+                <option value="modern-hero">Modern Hero Banner</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Accent Backdrop</label>
+              <select id="header-accent-style-select" class="input-premium" style="font-size:0.75rem; height:34px;">
+                <option value="minimal" selected>Minimal Clear</option>
+                <option value="glass">Glassmorphic Blur</option>
+                <option value="corporate">Classic Borders</option>
+                <option value="luxury">Double Gold Border</option>
+                <option value="creative">Solid Banner Tint</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Header Primary Font</label>
+            <select id="h-font" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="Inter" selected>Same as General</option>
+              <option value="Playfair Display">Playfair Serif</option>
+              <option value="Poppins">Poppins Modern</option>
+              <option value="Montserrat">Montserrat Geometrics</option>
+              <option value="Space Grotesk">Space Grotesk Tech</option>
+              <option value="JetBrains Mono">JetBrains Mono Code</option>
+            </select>
+          </div>
         </div>
-        <input type="range" id="slider-line-spacing" min="1" max="2.2" step="0.05" value="1.50" style="width:100%; height:6px; cursor:ew-resize; accent-color:var(--accent); background:rgba(255,255,255,0.1); border-radius:3px;">
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px; display:flex; flex-direction:column; gap:10px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Name & Role Geometry</h4>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label style="font-size:0.7rem; color:var(--text-muted);">Full Name Font Size</label>
+              <span id="lbl-h-size-name" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">32px</span>
+            </div>
+            <input type="range" id="h-size-name" min="16" max="52" value="32" style="width:100%; accent-color:var(--accent);">
+          </div>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Name Weight</label>
+            <select id="h-weight-name" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="400">Regular (400)</option>
+              <option value="600">Medium-Bold (600)</option>
+              <option value="800" selected>Extra Bold (800)</option>
+              <option value="900">Black Block (900)</option>
+            </select>
+          </div>
+          <div style="margin-top:4px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label style="font-size:0.7rem; color:var(--text-muted);">Job Title Size</label>
+              <span id="lbl-h-size-title" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">16px</span>
+            </div>
+            <input type="range" id="h-size-title" min="12" max="28" value="16" style="width:100%; accent-color:var(--accent);">
+          </div>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Job Title Weight</label>
+            <select id="h-weight-title" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="400">Light (400)</option>
+              <option value="600" selected>Semi-Bold (600)</option>
+              <option value="700">Bold (700)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Bottom Divide</label>
+            <select id="h-border" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="none" selected>No Divider Line</option>
+              <option value="solid-bottom">Solid bottom line</option>
+              <option value="double-bottom">Double bottom line</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Gap Beneath (px)</label>
+            <input type="number" id="h-spacing" class="input-premium" value="12" min="0" max="80" style="font-size:0.75rem; height:34px;">
+          </div>
+        </div>
       </div>
 
-      <!-- Page Margins Slider -->
-      <div style="margin-bottom:18px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <label for="slider-margins" style="font-size:0.85rem; font-weight:500;">Page Margins (Padding)</label>
-          <span id="label-margins" style="font-size:0.8rem; font-family:var(--font-mono); color:var(--accent);">40px</span>
+      <!-- TAB 3: TYPOGRAPHY DESIGNER PRO -->
+      <div id="drawer-tab-typo" class="drawer-tab-content-panel">
+        <div>
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Typography Fonts</h4>
+          <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Primary Document Font</label>
+          <select id="typo-font" class="input-premium" style="font-size:0.8rem; height:36px; width:100%;">
+            <option value="Inter" selected>Inter Neo-Grotesque</option>
+            <option value="Poppins">Poppins Modern Geometric</option>
+            <option value="Montserrat">Montserrat Editorial Space</option>
+            <option value="DM Sans">DM Sans Neutral Mono</option>
+            <option value="Playfair Display">Playfair Display Serif</option>
+            <option value="Roboto">Roboto Standard Clean</option>
+            <option value="Open Sans">Open Sans Geometric</option>
+            <option value="Lora">Lora Warm Serif</option>
+            <option value="JetBrains Mono">JetBrains Mono Developer</option>
+          </select>
         </div>
-        <input type="range" id="slider-margins" min="15" max="60" value="40" style="width:100%; height:6px; cursor:ew-resize; accent-color:var(--accent); background:rgba(255,255,255,0.1); border-radius:3px;">
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px; display:flex; flex-direction:column; gap:14px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Font Sizing & Spacing Parameters</h4>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label style="font-size:0.72rem; color:var(--text-muted);">Base Body Text Size</label>
+              <span id="typo-size-val" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">14px</span>
+            </div>
+            <input type="range" id="typo-size" min="11" max="20" value="14" style="width:100%; accent-color:var(--accent);">
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label style="font-size:0.72rem; color:var(--text-muted);">Document Line Height</label>
+              <span id="typo-height-val" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">1.50</span>
+            </div>
+            <input type="range" id="typo-height" min="10" max="24" value="15" style="width:100%; accent-color:var(--accent);">
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label style="font-size:0.72rem; color:var(--text-muted);">Letter Spacing (tracking)</label>
+              <span id="typo-spacing-val" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">0px</span>
+            </div>
+            <input type="range" id="typo-spacing" min="0" max="8" value="0" style="width:100%; accent-color:var(--accent);">
+          </div>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">General Font Weight</label>
+            <select id="typo-weight" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="300">Light Weight (300)</option>
+              <option value="400" selected>Regular Weight (400)</option>
+              <option value="500">Medium Weight (500)</option>
+              <option value="600">Medium Bold (600)</option>
+            </select>
+          </div>
+        </div>
       </div>
+
+      <!-- TAB 4: ADVANCED COLOR SYSTEM -->
+      <div id="drawer-tab-colors" class="drawer-tab-content-panel">
+        <div>
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Accent Preset Dots</h4>
+          <div class="preset-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
+            <button class="preset-dot active" data-preset="midnight-black" title="Midnight" style="background:#111; border: 1px solid var(--border-color); height:30px; border-radius:4px; display: flex; align-items: center; justify-content: center;"><div style="width:12px; height:12px; border-radius:50%; background:#fff;"></div></button>
+            <button class="preset-dot" data-preset="ocean-blue" title="Aqua" style="background:#2563eb; border:none; height:30px; border-radius:4px;"></button>
+            <button class="preset-dot" data-preset="purple-galaxy" title="Violet" style="background:#8b5cf6; border:none; height:30px; border-radius:4px;"></button>
+            <button class="preset-dot" data-preset="emerald-green" title="Green" style="background:#10b981; border:none; height:30px; border-radius:4px;"></button>
+            <button class="preset-dot" data-preset="sunset-orange" title="Amber" style="background:#f97316; border:none; height:30px; border-radius:4px;"></button>
+            <button class="preset-dot" data-preset="rose-pink" title="Pink" style="background:#ec4899; border:none; height:30px; border-radius:4px;"></button>
+            <button class="preset-dot" data-preset="cyber-neon" title="Cyber" style="background:#39ff14; border:none; height:30px; border-radius:4px;"></button>
+            <button class="preset-dot" data-preset="arctic-white" title="Winter" style="background:#38bdf8; border:none; height:30px; border-radius:4px;"></button>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Individual Theme Elements Hex</h4>
+          
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Primary -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 12px; border-radius:6px;">
+              <span style="font-size:0.75rem; font-weight:600; color:#ffffff;">Primary (Titles)</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="hex-primary" class="input-premium" value="#111827" style="width:70px; height:26px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 6px;">
+                <input type="color" id="picker-primary" value="#111827" style="width:26px; height:26px; border:none; padding:0; background:none; cursor:pointer;">
+              </div>
+            </div>
+            <!-- Secondary -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 12px; border-radius:6px;">
+              <span style="font-size:0.75rem; font-weight:600; color:#ffffff;">Secondary (Sub)</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="hex-secondary" class="input-premium" value="#4b5563" style="width:70px; height:26px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 6px;">
+                <input type="color" id="picker-secondary" value="#4b5563" style="width:26px; height:26px; border:none; padding:0; background:none; cursor:pointer;">
+              </div>
+            </div>
+            <!-- Accent -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 12px; border-radius:6px;">
+              <span style="font-size:0.75rem; font-weight:600; color:#ffffff;">Accent Highlights</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="hex-accent" class="input-premium" value="#8b5cf6" style="width:70px; height:26px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 6px;">
+                <input type="color" id="picker-accent" value="#8b5cf6" style="width:26px; height:26px; border:none; padding:0; background:none; cursor:pointer;">
+              </div>
+            </div>
+            <!-- Text -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 12px; border-radius:6px;">
+              <span style="font-size:0.75rem; font-weight:600; color:#ffffff;">Body General Text</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="hex-text" class="input-premium" value="#1f2937" style="width:70px; height:26px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 6px;">
+                <input type="color" id="picker-text" value="#1f2937" style="width:26px; height:26px; border:none; padding:0; background:none; cursor:pointer;">
+              </div>
+            </div>
+            <!-- Background -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:6px 12px; border-radius:6px;">
+              <span style="font-size:0.75rem; font-weight:600; color:#ffffff;">Paper Sheet Canvas</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="hex-bg" class="input-premium" value="#ffffff" style="width:70px; height:26px; font-size:0.7rem; font-family:var(--font-mono); margin:0; padding:2px 6px;">
+                <input type="color" id="picker-bg" value="#ffffff" style="width:26px; height:26px; border:none; padding:0; background:none; cursor:pointer;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Aesthetic Canvas Shading</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+            <button class="paper-shade-btn active" data-shade="pure-white" data-code="#ffffff" style="background:#ffffff; color:#000; border:1px solid var(--border-color); padding:10px 0; border-radius:6px; font-size:0.75rem; font-weight:500; cursor:pointer;" title="Pure Bleached A4 Stock">Pure White</button>
+            <button class="paper-shade-btn" data-shade="warm-ivory" data-code="#fdfbf7" style="background:#fdfbf7; color:#1c1917; border:1px solid var(--border-color); padding:10px 0; border-radius:6px; font-size:0.75rem; font-weight:500; cursor:pointer;" title="Premium Warm Ivory">Warm Ivory</button>
+            <button class="paper-shade-btn" data-shade="cool-gray" data-code="#f3f4f6" style="background:#f3f4f6; color:#111827; border:1px solid var(--border-color); padding:10px 0; border-radius:6px; font-size:0.75rem; font-weight:500; cursor:pointer;" title="Recycled Cool Slate">Cool Slate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SECTIONS MANAGEMENT -->
+      <div id="drawer-tab-sections" class="drawer-tab-content-panel">
+        <div>
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Global Layout Controls</h4>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Master Header Toggle</label>
+            <select id="toggle-global-headers" class="input-premium" style="font-size:0.75rem; height:34px;">
+              <option value="on">Apply Master Styles To All Headers</option>
+              <option value="off">De-couple (Individual section overrides)</option>
+            </select>
+          </div>
+
+          <!-- Master Header Variable Fields -->
+          <div id="wrapper-global-header-controls" style="display:flex; flex-direction:column; gap:8px; background:rgba(255,255,255,0.01); border:1px solid var(--border-color); padding:10px; border-radius:6px; margin-bottom:10px;">
+            <div>
+              <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:2px;">Shared Font Family</label>
+              <select id="global-header-font" class="input-premium" style="font-size:0.75rem; height:30px; padding:2px 6px;">
+                <option value="Inter" selected>Same as General</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Space Grotesk">Space Grotesk</option>
+                <option value="Playfair Display">Playfair Serif</option>
+              </select>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:2px;">Header Size (px)</label>
+                <input type="number" id="global-header-size" class="input-premium" value="14" min="10" max="24" style="font-size:0.75rem; height:30px; margin:0;">
+              </div>
+              <div>
+                <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:2px;">Font Weight</label>
+                <select id="global-header-weight" class="input-premium" style="font-size:0.72rem; height:30px; padding:2px 6px;">
+                  <option value="500">Medium (500)</option>
+                  <option value="600">Semi-Bold (600)</option>
+                  <option value="700" selected>Bold (700)</option>
+                  <option value="800">Extra Bold (800)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.68rem; color:var(--text-muted); display:block; margin-bottom:2px;">Divider Theme Line</label>
+              <select id="global-header-border" class="input-premium" style="font-size:0.75rem; height:30px; padding:2px 6px;">
+                <option value="solid-bottom" selected>Solid bottom line</option>
+                <option value="double-bottom">Double bottom line</option>
+                <option value="solid-top">Solid line above</option>
+                <option value="bullet">Left Accent Bullet</option>
+                <option value="box">Filled capsule background</option>
+                <option value="none">No Divider Lines</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Interactive Section Sorting</h4>
+          <div id="section-reorder-container" style="display:flex; flex-direction:column; gap:6px;">
+            <!-- dynamic order keys -->
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px;">Individual Section Overrides</h4>
+          <div id="individual-sections-override-list">
+            <!-- Dynamic accordion elements -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: SPACING DESIGNER -->
+      <div id="drawer-tab-spacing" class="drawer-tab-content-panel">
+        <div>
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Document Spacing Controls</h4>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Page Outer Margins</label>
+                <span id="label-margins" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">40px</span>
+              </div>
+              <input type="range" id="slider-margins" min="15" max="65" value="40" style="width:100%; accent-color:var(--accent);">
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Section to Section Gap</label>
+                <span id="lbl-section-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">24px</span>
+              </div>
+              <input type="range" id="slider-section-gap" min="10" max="60" value="24" style="width:100%; accent-color:var(--accent);">
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Item Row Spacing</label>
+                <span id="lbl-row-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">14px</span>
+              </div>
+              <input type="range" id="slider-row-gap" min="4" max="32" value="14" style="width:100%; accent-color:var(--accent);">
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Column Grid Gap</label>
+                <span id="lbl-column-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">24px</span>
+              </div>
+              <input type="range" id="slider-column-gap" min="10" max="50" value="24" style="width:100%; accent-color:var(--accent);">
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <label style="font-size:0.72rem; color:var(--text-muted);">Header Spacing Gap</label>
+                <span id="lbl-header-gap" style="font-size:0.7rem; color:var(--accent); font-family:var(--font-mono);">24px</span>
+              </div>
+              <input type="range" id="slider-header-gap" min="10" max="60" value="24" style="width:100%; accent-color:var(--accent);">
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="font-size:0.82rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Multi-Page Sheet Breaks Presets</h4>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Page Paper Layout Preset</label>
+              <select id="page-format-select" class="input-premium" style="font-size:0.75rem; height:34px;">
+                <option value="a4" selected>A4 Printable Standard (A4 210x297mm)</option>
+                <option value="letter">US Letter Standard (8.5" x 11")</option>
+                <option value="legal">US Legal Standard (8.5" x 14")</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="chk-show-page-breaks" checked style="width:16px; height:16px; accent-color:var(--accent); cursor:pointer;">
+              <label for="chk-show-page-breaks" style="font-size:0.75rem; color:#ffffff; cursor:pointer;">Show transparent page break dividers</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Paper Shade Settings -->
-    <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:20px; margin-bottom: 20px;">
-      <h4 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Premium Paper Shades</h4>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-        <button class="paper-shade-btn active" data-shade="pure-white" data-code="#ffffff" style="background:#ffffff; color:#000; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer;" title="Pure Bleached A4 Stock">Pure White</button>
-        <button class="paper-shade-btn" data-shade="warm-ivory" data-code="#fdfbf7" style="background:#fdfbf7; color:#1c1917; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer;" title="Premium Warm Textured Ivory">Warm Ivory</button>
-        <button class="paper-shade-btn" data-shade="cool-gray" data-code="#f3f4f6" style="background:#f3f4f6; color:#111827; border:1px solid var(--border-color); padding:10px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer;" title="Recycled Post-Consumer Cool Gray">Cool Gray</button>
-      </div>
-    </div>
+    <!-- SCRIPT FOR DYNAMIC HANDLERS INSIDE THEM ELEMENT -->
+    <script>
+      document.querySelectorAll(".theme-drawer-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".theme-drawer-tab-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const target = btn.getAttribute("data-drawer-tab");
+          document.querySelectorAll(".drawer-tab-content-panel").forEach(p => p.classList.remove("active"));
+          const matchPanel = document.getElementById("drawer-tab-" + target);
+          if (matchPanel) matchPanel.classList.add("active");
+        });
+      });
+    </script>
   </div>
 
   <!-- Direct ESM script initialization imports -->
